@@ -2,7 +2,6 @@
 require 'carrierwave'
 require 'digest/hmac'
 require 'digest/md5'
-require 'net/http'
 require "rest-client"
 
 module CarrierWave
@@ -14,7 +13,6 @@ module CarrierWave
           @aliyun_access_id = options[:aliyun_access_id]
           @aliyun_access_key = options[:aliyun_access_key]
           @aliyun_bucket = options[:aliyun_bucket]
-          @http = Net::HTTP.new('storage.aliyun.com')
         end
         
         def put(path, file)
@@ -32,7 +30,7 @@ module CarrierWave
             "Host" => "storage.aliyun.com",
             "Expect" => "100-Continue"
           }
-          response = RestClient.put("http://storage.aliyun.com/#{path}", file, headers)
+          response = RestClient.put(url, file, headers)
         end
         
         def get(path)

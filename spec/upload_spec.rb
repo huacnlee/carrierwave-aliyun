@@ -43,14 +43,31 @@ describe "Upload" do
     drop_db
   end
   
-  context "Upload Image" do
-    it "should upload image" do
-      f = load_file("foo.jpg")
-      photo = Photo.create(:image => f)
-      photo.errors.count.should == 0
-      open(photo.image.url).should_not == nil
-      open(photo.image.url).size.should == f.size
-      open(photo.image.small.url).should_not == nil
+  describe "Upload Image" do
+    context "should upload image" do
+      before(:all) do
+        @file = load_file("foo.jpg")
+        @file1 = load_file("foo.gif")
+        @photo = Photo.new(:image => @file)
+        @photo1 = Photo.new(:image => @file1)
+      end
+      
+      it "should upload file" do
+        @photo.save.should be_true
+        @photo1.save.should be_true
+      end
+      
+      it "should get uploaded file" do
+        img = open(@photo.image.url)
+        img.size.should == @file.size
+        img1 = open(@photo1.image.url)
+        img1.size.should == @file1.size
+      end
+      
+      it "sholud get small version uploaded file" do    
+        open(@photo.image.small.url).should_not == nil
+        open(@photo1.image.small.url).should_not == nil
+      end
     end
   end
 end
