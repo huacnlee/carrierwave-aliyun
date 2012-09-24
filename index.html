@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>carrierwave-aliyun by huacnlee</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>carrierwave-aliyun</h1>
+        <p>阿里云 OSS Ruby 上传组件，基于 Carrierwave</p>
+
+        <p class="view"><a href="https://github.com/huacnlee/carrierwave-aliyun">View the Project on GitHub <small>huacnlee/carrierwave-aliyun</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/huacnlee/carrierwave-aliyun/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/huacnlee/carrierwave-aliyun/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/huacnlee/carrierwave-aliyun">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>CarrierWave for Aliyun OSS</h1>
+
+<p>This gem adds support for <a href="http://oss.aliyun.com">Aliyun OSS</a> to <a href="https://github.com/jnicklas/carrierwave/">CarrierWave</a></p>
+
+<h2>Installation</h2>
+
+<pre><code>gem install carrierwave-aliyun
+</code></pre>
+
+<h2>Using Bundler</h2>
+
+<pre><code>gem 'rest-client'
+gem 'carrierwave-aliyun'
+</code></pre>
+
+<h2>Configuration</h2>
+
+<p>You'll need to configure the to use this in config/initializes/carrierwave.rb</p>
+
+<div class="highlight"><pre><span class="no">CarrierWave</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="ss">:aliyun</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">aliyun_access_id</span> <span class="o">=</span> <span class="s2">"xxxxxx"</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">aliyun_access_key</span> <span class="o">=</span> <span class="s1">'xxxxxx'</span>
+  <span class="c1"># you need create this bucket first!</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">aliyun_bucket</span> <span class="o">=</span> <span class="s2">"simple"</span>
+<span class="k">end</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/huacnlee">huacnlee</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-9745660-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
