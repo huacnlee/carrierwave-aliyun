@@ -20,14 +20,14 @@ module CarrierWave
           content_type = "image/jpg"
           date = Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
           path = "#{@aliyun_bucket}/#{path}"
-          url = "http://storage.aliyun.com/#{path}"
+          url = "http://oss.aliyuncs.com/#{path}"
           auth_sign = sign("PUT", path, content_md5, content_type ,date)
           headers = {
             "Authorization" => auth_sign, 
             "Content-Type" => content_type,
             "Content-Length" => file.length,
             "Date" => date,
-            "Host" => "storage.aliyun.com",
+            "Host" => "oss.aliyuncs.com",
             "Expect" => "100-Continue"
           }
           response = RestClient.put(url, file, headers)
@@ -93,7 +93,7 @@ module CarrierWave
         end
 
         def url
-          "http://storage.aliyun.com/#{@uploader.aliyun_bucket}/#{@path}"
+          "http://oss.aliyuncs.com/#{@uploader.aliyun_bucket}/#{@path}"
         end
 
         def store(data)
