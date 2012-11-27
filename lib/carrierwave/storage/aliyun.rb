@@ -13,6 +13,10 @@ module CarrierWave
           @aliyun_access_id = options[:aliyun_access_id]
           @aliyun_access_key = options[:aliyun_access_key]
           @aliyun_bucket = options[:aliyun_bucket]
+          @aliyun_host = "oss.aliyuncs.com"
+          if options[:aliyun_internal] == true
+            @aliyun_host = "oss-internal.aliyuncs.com"
+          end
         end
         
         def put(path, file)
@@ -20,14 +24,14 @@ module CarrierWave
           content_type = "image/jpg"
           date = Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
           path = "#{@aliyun_bucket}/#{path}"
-          url = "http://oss.aliyuncs.com/#{path}"
+          url = "http://#{@aliyun_host}/#{path}"
           auth_sign = sign("PUT", path, content_md5, content_type ,date)
           headers = {
             "Authorization" => auth_sign, 
             "Content-Type" => content_type,
             "Content-Length" => file.length,
             "Date" => date,
-            "Host" => "oss.aliyuncs.com",
+            "Host" => @aliyun_host,
             "Expect" => "100-Continue"
           }
           response = RestClient.put(url, file, headers)
@@ -113,13 +117,14 @@ module CarrierWave
           def oss_connection
             return @oss_connection if @oss_connection
             
-            config = {:aliyun_access_id => @uploader.aliyun_access_id, 
+            config = {
+              :aliyun_access_id => @uploader.aliyun_access_id, 
               :aliyun_access_key => @uploader.aliyun_access_key, 
               :aliyun_bucket => @uploader.aliyun_bucket
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
           end
-
+          
       end
       
       def store!(file)

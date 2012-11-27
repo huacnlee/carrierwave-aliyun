@@ -29,6 +29,7 @@ CarrierWave.configure do |config|
   config.aliyun_access_id = "7ewl4zm3mhi45vko9zx022ul"
   config.aliyun_access_key = 'Ajpi7IRKDKdXYHHFFoS89uQJQE8='
   config.aliyun_bucket = "carrierwave"
+  # config.aliyun_internal = false
 end
 
 def load_file(fname)

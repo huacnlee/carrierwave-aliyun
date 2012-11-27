@@ -4,23 +4,29 @@ This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](h
 
 ## Installation
 
-    gem install carrierwave-aliyun
+```bash
+gem install carrierwave-aliyun
+```
 
 ## Using Bundler
 
-    gem 'rest-client'
-    gem 'carrierwave-aliyun'
+```ruby
+gem 'rest-client'
+gem 'carrierwave-aliyun'
+```
 
 ## Configuration
 
-You'll need to configure the to use this in config/initializes/carrierwave.rb
+创建这么个脚本 `config/initializes/carrierwave.rb` 填入下面的代码，并修改对应的配置：
 
 ```ruby
 CarrierWave.configure do |config|
   config.storage = :aliyun
   config.aliyun_access_id = "xxxxxx"
   config.aliyun_access_key = 'xxxxxx'
-  # you need create this bucket first!
+  # 你需要在 Aliyum OSS 上面提前创建一个 Bucket
   config.aliyun_bucket = "simple"
+  # 是否使用内部连接，true - 使用 Aliyun 局域网的方式访问  false - 外部网络访问
+  config.aliyun_internal = true
 end
 ```
