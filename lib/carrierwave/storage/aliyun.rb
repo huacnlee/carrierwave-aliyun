@@ -18,10 +18,10 @@ module CarrierWave
             @aliyun_host = "oss-internal.aliyuncs.com"
           end
         end
-        
-        def put(path, file)
+
+        def put(path, file, options={})
           content_md5 = Digest::MD5.hexdigest(file)
-          content_type = "image/jpg"
+          content_type = options[:content_type] || "image/jpg"
           date = Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
           path = "#{@aliyun_bucket}/#{path}"
           url = "http://#{@aliyun_host}/#{path}"
