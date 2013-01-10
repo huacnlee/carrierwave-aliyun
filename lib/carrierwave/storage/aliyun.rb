@@ -100,8 +100,8 @@ module CarrierWave
           "http://oss.aliyuncs.com/#{@uploader.aliyun_bucket}/#{@path}"
         end
 
-        def store(data)
-          oss_connection.put(@path, data)
+        def store(data, opts = {})
+          oss_connection.put(@path, data, opts)
         end
 
         private
@@ -129,7 +129,7 @@ module CarrierWave
       
       def store!(file)
         f = CarrierWave::Storage::Aliyun::File.new(uploader, self, uploader.store_path)
-        f.store(file.read)
+        f.store(file.read, :content_type => file.content_type)
         f
       end
 

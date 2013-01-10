@@ -9,6 +9,10 @@ describe "Upload" do
       create_table :photos do |t|
         t.column :image, :string
       end
+      
+      create_table :attachments do |t|
+        t.column :file, :string
+      end
     end
   end
   
@@ -29,9 +33,21 @@ describe "Upload" do
       "photos"
     end
   end
+  
+  class AttachUploader < CarrierWave::Uploader::Base
+    include CarrierWave::MiniMagick
+
+    def store_dir
+      "attachs"
+    end
+  end
 
   class Photo < ActiveRecord::Base
     mount_uploader :image, PhotoUploader
+  end
+  
+  class Attachment < ActiveRecord::Base
+    mount_uploader :file, AttachUploader
   end
   
   
@@ -68,6 +84,23 @@ describe "Upload" do
         open(@photo.image.small.url).should_not == nil
         open(@photo1.image.small.url).should_not == nil
       end
+    end
+    
+    context "should update zip" do
+      before(:all) do
+        @file = load_file("foo.zip")
+        @attachment = Attachment.new(:file => @file)
+      end
+      
+      it "should upload file" do
+        @attachment.save.should be_true
+      end
+      
+      it "should get uploaded file" do
+        attach = open(@attachment.file.url)
+        attach.size.should == @file.size
+      end
+      
     end
   end
 end

@@ -1,3 +1,7 @@
+## 0.1.2
+
+* 修正 content_type 的支持，自动用原始文件的 content_type，以免上传 zip 之类的文件以后无法下载.
+
 ## 0.1.1
 
 * 修改 Aliyun OSS 的请求地址.
