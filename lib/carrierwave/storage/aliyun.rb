@@ -36,6 +36,18 @@ module CarrierWave
           RestClient.get url, headers
         end
 
+        def delete path
+          path = "#{@aliyun_bucket}/#{path}"
+          url = "http://#{@aliyun_host}/#{path}"
+          date = Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
+          headers =           {
+              "Authorization" => sign("DELETE", path, "", "", date),
+              "Date" => date,
+              "Host" => @aliyun_host,
+          }
+          RestClient.delete url, headers
+        end
+
         private
 
         def generate_header verb, path , content_md5, options={}
