@@ -79,10 +79,16 @@ describe "Upload" do
         img1 = open(@photo1.image.url)
         img1.size.should == @file1.size
       end
-      
-      it "sholud get small version uploaded file" do    
+
+      it "should get small version uploaded file" do
         open(@photo.image.small.url).should_not == nil
         open(@photo1.image.small.url).should_not == nil
+      end
+
+      it "should delete uploaded files" do
+        @photo.remove_image!
+        @photo.reload
+        expect {open(@photo.image.url)}.to raise_error(OpenURI::HTTPError)
       end
     end
     
