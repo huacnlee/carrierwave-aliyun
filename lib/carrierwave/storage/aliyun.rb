@@ -19,26 +19,50 @@ module CarrierWave
           end
         end
 
-        def put(path, file, options={})
-          content_md5 = Digest::MD5.hexdigest(file)
+        def put(path, file_data, options={})
+          path = format_path(path)
+          content_md5 = Digest::MD5.hexdigest(file_data)
           content_type = options[:content_type] || "image/jpg"
-          date = Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
-          path = "#{@aliyun_bucket}/#{path}"
-          url = "http://#{@aliyun_host}/#{path}"
-          auth_sign = sign("PUT", path, content_md5, content_type ,date)
+          date = gmtdate
+          url = path_to_url(path)
+          auth_sign = sign("PUT", path, content_md5, content_type,date)
           headers = {
             "Authorization" => auth_sign, 
             "Content-Type" => content_type,
-            "Content-Length" => file.length,
+            "Content-Length" => file_data.length,
             "Date" => date,
             "Host" => @aliyun_host,
             "Expect" => "100-Continue"
           }
-          response = RestClient.put(url, file, headers)
+          response = RestClient.put(url, file_data, headers)
+          return url
         end
         
-        def get(path)
-          @http.get(path)            
+        def delete(path)
+          path = format_path(path)
+          date = gmtdate
+          headers = {
+            "Host" => @aliyun_host,
+            "Date" => date,
+            "Authorization" => sign("DELETE", path, "", "" ,date)
+          }
+          url = path_to_url(path)
+          RestClient.delete(url, headers)
+          return url
+        end
+        
+        def gmtdate
+          Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
+        end
+        
+        def format_path(path)
+          return "" if path.blank?
+          path.gsub!(/^\//,"")
+          [@aliyun_bucket, path].join("/")
+        end
+        
+        def path_to_url(path)
+          "http://#{@aliyun_host}/#{path}"
         end
           
       private      
@@ -92,6 +116,7 @@ module CarrierWave
             true
           rescue Exception => e
             # If the file's not there, don't panic
+            puts "carrierwave-aliyun delete file failed: #{e}"
             nil
           end
         end

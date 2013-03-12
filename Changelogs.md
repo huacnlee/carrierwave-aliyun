@@ -1,3 +1,8 @@
+## 0.1.3
+
+* delete 接口加入。
+* 支持 Carriewave 自动在更新上传文件的时候删除老文件（比如，用户重新上传头像，老头像图片文件将会被 CarrierWave 删除）。
+
 ## 0.1.2
 
 * 修正 content_type 的支持，自动用原始文件的 content_type，以免上传 zip 之类的文件以后无法下载.

@@ -30,3 +30,7 @@ CarrierWave.configure do |config|
   config.aliyun_internal = true
 end
 ```
+
+## 跳过 CarrierWave 直接调用 Aliyun API
+
+如果你有需求想跳过 CarrierWave，直接调用 Aliyun 的接口，可以参看 `spec/aliyun_spec.rb` 里面有例子。

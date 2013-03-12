@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
+require File.expand_path('lib/carrierwave/aliyun/version')
 
 Gem::Specification.new do |s|
   s.name        = "carrierwave-aliyun"
-  s.version     = "0.1.2"
+  s.version     = CarrierWave::Aliyun::Version.current
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jason Lee"]
   s.email       = ["huacnlee@gmail.com"]

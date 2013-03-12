@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 require "open-uri"
+require "net/http"
 ActiveRecord::Base.establish_connection(:adapter => 'sqlite3', :database => ':memory:')
 
 describe "Upload" do
@@ -101,6 +102,12 @@ describe "Upload" do
         attach.size.should == @file.size
       end
       
+      it "should delete old file when upload a new file again" do
+        old_url = @attachment.file.url
+        @attachment.file = load_file("foo.gif")
+        @attachment.save
+        Net::HTTP.get_response(URI.parse(old_url)).code.should == "404"
+      end
     end
   end
 end

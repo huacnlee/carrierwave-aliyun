@@ -24,11 +24,15 @@ end
 ActiveRecord::Migration.verbose = false
 
 # 测试的时候需要修改这个地方
+ALIYUN_ACCESS_ID = "7ewl4zm3mhi45vko9zx022ul"
+ALIYUN_ACCESS_KEY = 'Ajpi7IRKDKdXYHHFFoS89uQJQE8='
+ALIYUN_BUCKET = "carrierwave"
+
 CarrierWave.configure do |config|
   config.storage = :aliyun
-  config.aliyun_access_id = "7ewl4zm3mhi45vko9zx022ul"
-  config.aliyun_access_key = 'Ajpi7IRKDKdXYHHFFoS89uQJQE8='
-  config.aliyun_bucket = "carrierwave"
+  config.aliyun_access_id = ALIYUN_ACCESS_ID
+  config.aliyun_access_key = ALIYUN_ACCESS_KEY
+  config.aliyun_bucket = ALIYUN_BUCKET
   # config.aliyun_internal = false
 end
 
