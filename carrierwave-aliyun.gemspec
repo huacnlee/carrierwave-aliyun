@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jason Lee"]
   s.email       = ["huacnlee@gmail.com"]
-  s.homepage    = "https://github.com/nowa/carrierwave-aliyun"
+  s.homepage    = "https://github.com/huacnlee/carrierwave-aliyun"
   s.summary     = %q{Aliyun OSS support for Carrierwave}
   s.description = %q{Aliyun OSS support for Carrierwave}
   s.files         = `git ls-files`.split("\n")
