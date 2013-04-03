@@ -7,6 +7,7 @@ module CarrierWave
         add_config :aliyun_access_key
         add_config :aliyun_bucket
         add_config :aliyun_internal
+        add_config :aliyun_host
       end
     end
     

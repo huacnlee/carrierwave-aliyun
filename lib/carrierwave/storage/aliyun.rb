@@ -13,9 +13,10 @@ module CarrierWave
           @aliyun_access_id = options[:aliyun_access_id]
           @aliyun_access_key = options[:aliyun_access_key]
           @aliyun_bucket = options[:aliyun_bucket]
-          @aliyun_host = "oss.aliyuncs.com"
+          @aliyun_upload_host = "oss.aliyuncs.com"
+          @aliyun_host = options[:aliyun_host] || @aliyun_upload_host
           if options[:aliyun_internal] == true
-            @aliyun_host = "oss-internal.aliyuncs.com"
+            @aliyun_upload_host = "oss-internal.aliyuncs.com"
           end
         end
 
@@ -31,24 +32,24 @@ module CarrierWave
             "Content-Type" => content_type,
             "Content-Length" => file_data.length,
             "Date" => date,
-            "Host" => @aliyun_host,
+            "Host" => @aliyun_upload_host,
             "Expect" => "100-Continue"
           }
           response = RestClient.put(url, file_data, headers)
-          return url
+          return path_to_url(path, :get => true)
         end
         
         def delete(path)
           path = format_path(path)
           date = gmtdate
           headers = {
-            "Host" => @aliyun_host,
+            "Host" => @aliyun_upload_host,
             "Date" => date,
             "Authorization" => sign("DELETE", path, "", "" ,date)
           }
           url = path_to_url(path)
           RestClient.delete(url, headers)
-          return url
+          return path_to_url(path, :get => true)
         end
         
         def gmtdate
@@ -61,8 +62,10 @@ module CarrierWave
           [@aliyun_bucket, path].join("/")
         end
         
-        def path_to_url(path)
-          "http://#{@aliyun_host}/#{path}"
+        def path_to_url(path, opts = {})
+          host = @aliyun_upload_host
+          host = @aliyun_host if opts[:get]
+          "http://#{host}/#{path}"
         end
           
       private      
@@ -122,7 +125,7 @@ module CarrierWave
         end
 
         def url
-          "http://oss.aliyuncs.com/#{@uploader.aliyun_bucket}/#{@path}"
+          "http://#{@uploader.aliyun_host}/#{@uploader.aliyun_bucket}/#{@path}"
         end
 
         def store(data, opts = {})
