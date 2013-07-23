@@ -108,6 +108,23 @@ describe "Upload" do
         @attachment.save
         Net::HTTP.get_response(URI.parse(old_url)).code.should == "404"
       end
+
+      context "using remove_file! to delete file" do
+        it "deletes file from aliyun" do
+          @attachment.file = load_file("foo.gif")
+          @attachment.save
+          old_url = @attachment.file.url
+          @attachment.remove_file!
+          Net::HTTP.get_response(URI.parse(old_url)).code.should == "404"
+        end
+
+        it "clears the file attribute" do
+          @attachment.file = load_file("foo.gif")
+          @attachment.save
+          @attachment.remove_file!
+          @attachment.file.url.should == nil
+        end
+      end
     end
   end
 end
