@@ -27,12 +27,14 @@ ActiveRecord::Migration.verbose = false
 ALIYUN_ACCESS_ID = "7ewl4zm3mhi45vko9zx022ul"
 ALIYUN_ACCESS_KEY = 'Ajpi7IRKDKdXYHHFFoS89uQJQE8='
 ALIYUN_BUCKET = "carrierwave"
+ALIYUN_HOST = "oss.aliyuncs.com"
 
 CarrierWave.configure do |config|
   config.storage = :aliyun
   config.aliyun_access_id = ALIYUN_ACCESS_ID
   config.aliyun_access_key = ALIYUN_ACCESS_KEY
   config.aliyun_bucket = ALIYUN_BUCKET
+  config.aliyun_host = ALIYUN_HOST
   # config.aliyun_internal = false
 end
 
