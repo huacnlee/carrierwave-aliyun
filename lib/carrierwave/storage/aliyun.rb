@@ -3,6 +3,7 @@ require 'carrierwave'
 require 'digest/hmac'
 require 'digest/md5'
 require "rest-client"
+require 'uri'
 
 module CarrierWave
   module Storage
@@ -40,7 +41,7 @@ module CarrierWave
             "Host" => host,
             "Expect" => "100-Continue"
           }
-          RestClient.put(url, file_data, headers)
+          RestClient.put(URI.encode(url), file_data, headers)
           return path_to_url(path, :get => true)
         end
         
@@ -55,7 +56,7 @@ module CarrierWave
             "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
           }
           url = path_to_url(path)
-          RestClient.delete(url, headers)
+          RestClient.delete(URI.encode(url), headers)
           return path_to_url(path, :get => true)
         end
         
@@ -143,10 +144,10 @@ module CarrierWave
 
         def url
           if oss_connection.use_custom_domain?
-            return "http://#{@uploader.aliyun_host}/#{@path}"
+            return URI.encode("http://#{@uploader.aliyun_host}/#{@path}")
           end
           
-          "http://#{@uploader.aliyun_bucket}.#{@uploader.aliyun_host || 'oss.aliyuncs.com'}/#{@path}"
+          URI.encode("http://#{@uploader.aliyun_bucket}.#{@uploader.aliyun_host || 'oss.aliyuncs.com'}/#{@path}")
         end
 
         def store(data, opts = {})
