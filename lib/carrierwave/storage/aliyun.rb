@@ -16,8 +16,9 @@ module CarrierWave
           @aliyun_upload_host = "oss.aliyuncs.com"
           @aliyun_host = options[:aliyun_host] || @aliyun_upload_host
           
-          @aliyun_custom_domain ||= !options[:aliyun_host].blank?
-          
+          @aliyun_custom_domain ||= !options[:aliyun_host].blank? && 
+                                    @aliyun_host != 'oss.aliyuncs.com'
+         
           if options[:aliyun_internal] == true
             @aliyun_upload_host = "oss-internal.aliyuncs.com"
           end
