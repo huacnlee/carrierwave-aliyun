@@ -40,7 +40,7 @@ module CarrierWave
             "Host" => host,
             "Expect" => "100-Continue"
           }
-          response = RestClient.put(url, file_data, headers)
+          RestClient.put(url, file_data, headers)
           return path_to_url(path, :get => true)
         end
         
@@ -142,7 +142,7 @@ module CarrierWave
         end
 
         def url
-          if @oss_connection.use_custom_domain?
+          if oss_connection.use_custom_domain?
             return "http://#{@uploader.aliyun_host}/#{@path}"
           end
           
