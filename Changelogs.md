@@ -1,3 +1,8 @@
+## 0.2.0
+
+* Aliyun OSS 新的[三级域名规则支持](http://bbs.aliyun.com/read.php?tid=139226) by [chaixl](https://github.com/chaixl)
+* 注意! 如果你之前使用 0.1.5 一下的版本，你可能需要调整一下你的自定义域名的 CNAME 解析，阿里云新的 URL 结构变化(少了 Bucket 一层目录)，当然你也可以选择不要升级，之前 0.1.5 版本是稳定的。
+
 ## 0.1.5
 
 * 自定义域名支持
