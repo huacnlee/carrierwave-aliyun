@@ -29,13 +29,13 @@ describe "Aliyun" do
   
   it "should use default domain" do
     url = @connection.put("a/a.jpg",load_file("foo.jpg").read)
-    url.should == "http://oss.aliyuncs.com/#{ALIYUN_BUCKET}/a/a.jpg"
+    url.should == "http://#{ALIYUN_BUCKET}.oss.aliyuncs.com/a/a.jpg"
   end
   
   it "should support custom domain" do
     @opts[:aliyun_host] = "foo.bar.com"
     @connection = CarrierWave::Storage::Aliyun::Connection.new(@opts)
     url = @connection.put("a/a.jpg",load_file("foo.jpg").read)
-    url.should == "http://foo.bar.com/#{ALIYUN_BUCKET}/a/a.jpg"
+    url.should == "http://foo.bar.com/a/a.jpg"
   end
 end
