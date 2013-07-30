@@ -3,6 +3,7 @@ require 'carrierwave'
 require 'digest/hmac'
 require 'digest/md5'
 require "rest-client"
+require 'uri'
 
 module CarrierWave
   module Storage
@@ -15,6 +16,10 @@ module CarrierWave
           @aliyun_bucket = options[:aliyun_bucket]
           @aliyun_upload_host = "oss.aliyuncs.com"
           @aliyun_host = options[:aliyun_host] || @aliyun_upload_host
+          
+          @aliyun_custom_domain ||= !options[:aliyun_host].blank? && 
+                                    @aliyun_host != 'oss.aliyuncs.com'
+         
           if options[:aliyun_internal] == true
             @aliyun_upload_host = "oss-internal.aliyuncs.com"
           end
@@ -22,33 +27,37 @@ module CarrierWave
 
         def put(path, file_data, options={})
           path = format_path(path)
+          bucket_path = get_bucket_path(path)
           content_md5 = Digest::MD5.hexdigest(file_data)
           content_type = options[:content_type] || "image/jpg"
           date = gmtdate
           url = path_to_url(path)
-          auth_sign = sign("PUT", path, content_md5, content_type,date)
+          host = "#{@aliyun_bucket}.#{@aliyun_upload_host}"
+          auth_sign = sign("PUT", bucket_path, content_md5, content_type,date)
           headers = {
             "Authorization" => auth_sign, 
             "Content-Type" => content_type,
             "Content-Length" => file_data.length,
             "Date" => date,
-            "Host" => @aliyun_upload_host,
+            "Host" => host,
             "Expect" => "100-Continue"
           }
-          response = RestClient.put(url, file_data, headers)
+          RestClient.put(URI.encode(url), file_data, headers)
           return path_to_url(path, :get => true)
         end
         
         def delete(path)
           path = format_path(path)
+          bucket_path = get_bucket_path(path)
           date = gmtdate
+          host = "#{@aliyun_bucket}.#{@aliyun_upload_host}"
           headers = {
-            "Host" => @aliyun_upload_host,
+            "Host" => host,
             "Date" => date,
-            "Authorization" => sign("DELETE", path, "", "" ,date)
+            "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
           }
           url = path_to_url(path)
-          RestClient.delete(url, headers)
+          RestClient.delete(URI.encode(url), headers)
           return path_to_url(path, :get => true)
         end
         
@@ -59,15 +68,25 @@ module CarrierWave
         def format_path(path)
           return "" if path.blank?
           path.gsub!(/^\//,"")
-          [@aliyun_bucket, path].join("/")
+          
+          path
+        end
+
+        def get_bucket_path(path)
+          [@aliyun_bucket,path].join("/")
         end
         
         def path_to_url(path, opts = {})
           host = @aliyun_upload_host
-          host = @aliyun_host if opts[:get]
-          "http://#{host}/#{path}"
+          return "http://#{@aliyun_host}/#{path}" if opts[:get] && use_custom_domain?
+         
+          "http://#{@aliyun_bucket}.#{host}/#{path}"
         end
-          
+        
+        def use_custom_domain?
+          @aliyun_custom_domain ||= false
+        end
+
       private      
         def sign(verb, path, content_md5 = '', content_type = '', date)
           canonicalized_oss_headers = ''
@@ -125,7 +144,11 @@ module CarrierWave
         end
 
         def url
-          "http://#{@uploader.aliyun_host}/#{@uploader.aliyun_bucket}/#{@path}"
+          if oss_connection.use_custom_domain?
+            return URI.encode("http://#{@uploader.aliyun_host}/#{@path}")
+          end
+          
+          URI.encode("http://#{@uploader.aliyun_bucket}.#{@uploader.aliyun_host || 'oss.aliyuncs.com'}/#{@path}")
         end
 
         def store(data, opts = {})
@@ -144,11 +167,13 @@ module CarrierWave
 
           def oss_connection
             return @oss_connection if @oss_connection
-            
+         
             config = {
               :aliyun_access_id => @uploader.aliyun_access_id, 
               :aliyun_access_key => @uploader.aliyun_access_key, 
-              :aliyun_bucket => @uploader.aliyun_bucket
+              :aliyun_bucket => @uploader.aliyun_bucket,
+              :aliyun_internal => @uploader.aliyun_internal,
+              :aliyun_host => @uploader.aliyun_host
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
           end
