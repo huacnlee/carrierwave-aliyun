@@ -172,6 +172,7 @@ module CarrierWave
               :aliyun_access_id => @uploader.aliyun_access_id, 
               :aliyun_access_key => @uploader.aliyun_access_key, 
               :aliyun_bucket => @uploader.aliyun_bucket,
+              :aliyun_internal => @uploader.aliyun_internal,
               :aliyun_host => @uploader.aliyun_host
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
