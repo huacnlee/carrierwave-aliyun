@@ -14,15 +14,13 @@ module CarrierWave
           @aliyun_access_id = options[:aliyun_access_id]
           @aliyun_access_key = options[:aliyun_access_key]
           @aliyun_bucket = options[:aliyun_bucket]
-          @aliyun_upload_host = "oss.aliyuncs.com"
-          @aliyun_host = options[:aliyun_host] || @aliyun_upload_host
-          
-          @aliyun_custom_domain ||= !options[:aliyun_host].blank? && 
-                                    @aliyun_host != 'oss.aliyuncs.com'
-         
+          # Host for upload
+          @aliyun_upload_host = "#{@aliyun_bucket}.oss.aliyuncs.com"
           if options[:aliyun_internal] == true
-            @aliyun_upload_host = "oss-internal.aliyuncs.com"
+            @aliyun_upload_host = "#{@aliyun_bucket}.oss-internal.aliyuncs.com"
           end
+          # Host for get request
+          @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss.aliyuncs.com"
         end
 
         def put(path, file_data, options={})
@@ -32,14 +30,13 @@ module CarrierWave
           content_type = options[:content_type] || "image/jpg"
           date = gmtdate
           url = path_to_url(path)
-          host = "#{@aliyun_bucket}.#{@aliyun_upload_host}"
           auth_sign = sign("PUT", bucket_path, content_md5, content_type,date)
           headers = {
             "Authorization" => auth_sign, 
             "Content-Type" => content_type,
             "Content-Length" => file_data.length,
             "Date" => date,
-            "Host" => host,
+            "Host" => @aliyun_upload_host,
             "Expect" => "100-Continue"
           }
           RestClient.put(URI.encode(url), file_data, headers)
@@ -50,9 +47,8 @@ module CarrierWave
           path = format_path(path)
           bucket_path = get_bucket_path(path)
           date = gmtdate
-          host = "#{@aliyun_bucket}.#{@aliyun_upload_host}"
           headers = {
-            "Host" => host,
+            "Host" => @aliyun_upload_host,
             "Date" => date,
             "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
           }
@@ -77,14 +73,11 @@ module CarrierWave
         end
         
         def path_to_url(path, opts = {})
-          host = @aliyun_upload_host
-          return "http://#{@aliyun_host}/#{path}" if opts[:get] && use_custom_domain?
-         
-          "http://#{@aliyun_bucket}.#{host}/#{path}"
-        end
-        
-        def use_custom_domain?
-          @aliyun_custom_domain ||= false
+          if opts[:get]
+            "http://#{@aliyun_host}/#{path}"
+          else
+            "http://#{@aliyun_upload_host}/#{path}"
+          end
         end
 
       private      
@@ -144,11 +137,7 @@ module CarrierWave
         end
 
         def url
-          if oss_connection.use_custom_domain?
-            return URI.encode("http://#{@uploader.aliyun_host}/#{@path}")
-          end
-          
-          URI.encode("http://#{@uploader.aliyun_bucket}.#{@uploader.aliyun_host || 'oss.aliyuncs.com'}/#{@path}")
+          oss_connection.path_to_url(@path, :get => true)
         end
 
         def store(data, opts = {})
