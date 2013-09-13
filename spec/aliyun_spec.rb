@@ -13,12 +13,12 @@ describe "Aliyun" do
   end
   
   it "should put" do
-    url = @connection.put("a/a.jpg",load_file("foo.jpg").read)
+    url = @connection.put("a/a.jpg",load_file("foo.jpg"))
     Net::HTTP.get_response(URI.parse(url)).code.should == "200"
   end
 
   it "should put with / prefix" do
-    url = @connection.put("/a/a.jpg",load_file("foo.jpg").read)
+    url = @connection.put("/a/a.jpg",load_file("foo.jpg"))
     Net::HTTP.get_response(URI.parse(url)).code.should == "200"
   end
   
@@ -28,14 +28,14 @@ describe "Aliyun" do
   end
   
   it "should use default domain" do
-    url = @connection.put("a/a.jpg",load_file("foo.jpg").read)
+    url = @connection.put("a/a.jpg",load_file("foo.jpg"))
     url.should == "http://#{ALIYUN_BUCKET}.oss.aliyuncs.com/a/a.jpg"
   end
   
   it "should support custom domain" do
     @opts[:aliyun_host] = "foo.bar.com"
     @connection = CarrierWave::Storage::Aliyun::Connection.new(@opts)
-    url = @connection.put("a/a.jpg",load_file("foo.jpg").read)
+    url = @connection.put("a/a.jpg",load_file("foo.jpg"))
     url.should == "http://foo.bar.com/a/a.jpg"
   end
 end

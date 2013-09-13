@@ -1,3 +1,8 @@
+## 0.2.1
+
+* 避免计算上传文件的时候读取所有内容到内存，之前的做法对于大文件会耗费过多的内存；
+* Carrierwave::Storage::Aliyum::Connection 的 put 方法接口变化，file 现在应该传一个 File 的实例。
+
 ## 0.2.0
 
 * Aliyun OSS 新的[三级域名规则支持](http://bbs.aliyun.com/read.php?tid=139226) by [chaixl](https://github.com/chaixl)

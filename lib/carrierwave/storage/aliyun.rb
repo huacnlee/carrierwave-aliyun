@@ -8,7 +8,7 @@ require 'uri'
 module CarrierWave
   module Storage
     class Aliyun < Abstract
-      
+
       class Connection
         def initialize(options={})
           @aliyun_access_id = options[:aliyun_access_id]
@@ -23,26 +23,47 @@ module CarrierWave
           @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss.aliyuncs.com"
         end
 
-        def put(path, file_data, options={})
+=begin rdoc
+上传文件
+
+== 参数:
+- path - remote 存储路径
+- file - 需要上传文件的 File 对象
+- options:
+  - content_type - 上传文件的 MimeType，默认 `image/jpg`
+
+== 返回值:
+图片的下载地址
+=end
+        def put(path, file, options={})
           path = format_path(path)
           bucket_path = get_bucket_path(path)
-          content_md5 = Digest::MD5.hexdigest(file_data)
+          content_md5 = Digest::MD5.file(file)
           content_type = options[:content_type] || "image/jpg"
           date = gmtdate
           url = path_to_url(path)
           auth_sign = sign("PUT", bucket_path, content_md5, content_type,date)
           headers = {
-            "Authorization" => auth_sign, 
+            "Authorization" => auth_sign,
             "Content-Type" => content_type,
-            "Content-Length" => file_data.length,
+            "Content-Length" => file.size,
             "Date" => date,
             "Host" => @aliyun_upload_host,
             "Expect" => "100-Continue"
           }
-          RestClient.put(URI.encode(url), file_data, headers)
+          RestClient.put(URI.encode(url), file, headers)
           return path_to_url(path, :get => true)
         end
-        
+
+=begin rdoc
+删除 Remote 的文件
+
+== 参数:
+- path - remote 存储路径
+
+== 返回值:
+图片的下载地址
+=end
         def delete(path)
           path = format_path(path)
           bucket_path = get_bucket_path(path)
@@ -56,22 +77,26 @@ module CarrierWave
           RestClient.delete(URI.encode(url), headers)
           return path_to_url(path, :get => true)
         end
-        
+
+        ##
+        # 阿里云需要的 GMT 时间格式
         def gmtdate
           Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
         end
-        
+
         def format_path(path)
           return "" if path.blank?
           path.gsub!(/^\//,"")
-          
+
           path
         end
 
         def get_bucket_path(path)
           [@aliyun_bucket,path].join("/")
         end
-        
+
+        ##
+        # 根据配置返回完整的上传文件的访问地址
         def path_to_url(path, opts = {})
           if opts[:get]
             "http://#{@aliyun_host}/#{path}"
@@ -80,10 +105,10 @@ module CarrierWave
           end
         end
 
-      private      
+      private
         def sign(verb, path, content_md5 = '', content_type = '', date)
           canonicalized_oss_headers = ''
-          canonicalized_resource = "/#{path}"          
+          canonicalized_resource = "/#{path}"
           string_to_sign = "#{verb}\n\n#{content_type}\n#{date}\n#{canonicalized_oss_headers}#{canonicalized_resource}"
           digest = OpenSSL::Digest::Digest.new('sha1')
           h = OpenSSL::HMAC.digest(digest, @aliyun_access_key, string_to_sign)
@@ -140,8 +165,8 @@ module CarrierWave
           oss_connection.path_to_url(@path, :get => true)
         end
 
-        def store(data, opts = {})
-          oss_connection.put(@path, data, opts)
+        def store(file, opts = {})
+          oss_connection.put(@path, file, opts)
         end
 
         private
@@ -156,22 +181,22 @@ module CarrierWave
 
           def oss_connection
             return @oss_connection if @oss_connection
-         
+
             config = {
-              :aliyun_access_id => @uploader.aliyun_access_id, 
-              :aliyun_access_key => @uploader.aliyun_access_key, 
+              :aliyun_access_id => @uploader.aliyun_access_id,
+              :aliyun_access_key => @uploader.aliyun_access_key,
               :aliyun_bucket => @uploader.aliyun_bucket,
               :aliyun_internal => @uploader.aliyun_internal,
               :aliyun_host => @uploader.aliyun_host
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
           end
-          
+
       end
-      
+
       def store!(file)
         f = CarrierWave::Storage::Aliyun::File.new(uploader, self, uploader.store_path)
-        f.store(file.read, :content_type => file.content_type)
+        f.store(::File.open(file.file), :content_type => file.content_type)
         f
       end
 

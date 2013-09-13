@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+  s.license       = 'MIT'
 
   s.add_dependency "carrierwave", [">= 0.5.7"]
   s.add_dependency "rest-client", [">= 1.6.7"]
