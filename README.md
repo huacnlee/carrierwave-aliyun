@@ -2,6 +2,8 @@
 
 This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](https://github.com/jnicklas/carrierwave/)
 
+- [![Gem Version](https://badge.fury.io/rb/carrierwave-aliyun.png)](https://rubygems.org/gems/carrierwave-aliyun)
+
 ## Installation
 
 ```bash
