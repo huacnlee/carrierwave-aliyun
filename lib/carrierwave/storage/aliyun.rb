@@ -169,6 +169,10 @@ module CarrierWave
           oss_connection.put(@path, file, opts)
         end
 
+        def extension
+          @path.split('.').last
+        end
+
         private
 
           def headers
