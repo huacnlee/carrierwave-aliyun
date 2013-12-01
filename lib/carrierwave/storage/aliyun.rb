@@ -14,13 +14,14 @@ module CarrierWave
           @aliyun_access_id = options[:aliyun_access_id]
           @aliyun_access_key = options[:aliyun_access_key]
           @aliyun_bucket = options[:aliyun_bucket]
+          @aliyun_area   = options[:aliyun_area] || 'cn-hangzhou'
           # Host for upload
-          @aliyun_upload_host = "#{@aliyun_bucket}.oss.aliyuncs.com"
+          @aliyun_upload_host = "#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
           if options[:aliyun_internal] == true
-            @aliyun_upload_host = "#{@aliyun_bucket}.oss-internal.aliyuncs.com"
+            @aliyun_upload_host = "#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
           end
           # Host for get request
-          @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss.aliyuncs.com"
+          @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
         end
 
 =begin rdoc
