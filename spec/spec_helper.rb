@@ -33,6 +33,7 @@ CarrierWave.configure do |config|
   config.aliyun_access_id = ALIYUN_ACCESS_ID
   config.aliyun_access_key = ALIYUN_ACCESS_KEY
   config.aliyun_bucket = ALIYUN_BUCKET
+  config.aliyun_area = "cn-hangzhou"
   # config.aliyun_internal = false
 end
 

@@ -11,7 +11,7 @@ describe "Aliyun" do
     }
     @connection = CarrierWave::Storage::Aliyun::Connection.new(@opts)
   end
-  
+
   it "should put" do
     url = @connection.put("a/a.jpg",load_file("foo.jpg"))
     Net::HTTP.get_response(URI.parse(url)).code.should == "200"
@@ -29,7 +29,7 @@ describe "Aliyun" do
   
   it "should use default domain" do
     url = @connection.put("a/a.jpg",load_file("foo.jpg"))
-    url.should == "http://#{ALIYUN_BUCKET}.oss.aliyuncs.com/a/a.jpg"
+    url.should == "http://#{ALIYUN_BUCKET}.oss-cn-hangzhou.aliyuncs.com/a/a.jpg"
   end
   
   it "should support custom domain" do
