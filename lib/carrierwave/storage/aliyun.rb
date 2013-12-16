@@ -56,6 +56,22 @@ module CarrierWave
           return path_to_url(path, :get => true)
         end
 
+
+=begin rdoc
+读取文件
+
+== 参数:
+- path - remote 存储路径
+
+== 返回值:
+图片文件
+=end
+        def get(path)
+          path = format_path(path)
+          url = path_to_url(path)
+          RestClient.get(URI.encode(url))
+        end
+
 =begin rdoc
 删除 Remote 的文件
 
@@ -145,7 +161,8 @@ module CarrierWave
         #
         def read
           object = oss_connection.get(@path)
-          object.data
+          @headers = object.headers
+          object.body
         end
 
         ##
@@ -164,6 +181,14 @@ module CarrierWave
 
         def url
           oss_connection.path_to_url(@path, :get => true)
+        end
+
+        def content_type
+          headers[:content_type]
+        end
+
+        def content_type=(new_content_type)
+          headers[:content_type] = new_content_type
         end
 
         def store(file, opts = {})
