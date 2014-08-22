@@ -52,7 +52,7 @@ module CarrierWave
             "Host" => @aliyun_upload_host,
             "Expect" => "100-Continue"
           }
-          RestClient.put(URI.encode(url), file, headers)
+          RestClient.put(URI.encode(url).gsub("+", "%2B"), file, headers)
           return path_to_url(path, :get => true)
         end
 
@@ -91,7 +91,7 @@ module CarrierWave
             "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
           }
           url = path_to_url(path)
-          RestClient.delete(URI.encode(url), headers)
+          RestClient.delete(URI.encode(url).gsub("+", "%2B"), headers)
           return path_to_url(path, :get => true)
         end
 
