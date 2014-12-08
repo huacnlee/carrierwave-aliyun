@@ -35,6 +35,8 @@ CarrierWave.configure do |config|
   # 使用自定义域名，设定此项，carrierwave 返回的 URL 将会用自定义域名
   # 自定于域名请 CNAME 到 you_bucket_name.oss.aliyuncs.com (you_bucket_name 是你的 bucket 的名称)
   config.aliyun_host = "foo.bar.com" 
+  # 配置访问数据的协议，默认: http
+  # config.aliyun_get_protocol = 'https'
 end
 ```
 

@@ -22,6 +22,7 @@ module CarrierWave
           end
           # Host for get request
           @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+          @aliyun_get_protocol = options[:aliyun_get_protocol] || "http"
         end
 
 =begin rdoc
@@ -116,7 +117,7 @@ module CarrierWave
         # 根据配置返回完整的上传文件的访问地址
         def path_to_url(path, opts = {})
           if opts[:get]
-            "http://#{@aliyun_host}/#{path}"
+            "#{@aliyun_get_protocol}://#{@aliyun_host}/#{path}"
           else
             "http://#{@aliyun_upload_host}/#{path}"
           end
