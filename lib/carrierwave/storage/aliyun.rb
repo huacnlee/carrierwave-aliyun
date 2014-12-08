@@ -22,6 +22,7 @@ module CarrierWave
           end
           # Host for get request
           @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+          @aliyun_get_protocol = options[:aliyun_get_protocol] || "http"
         end
 
 =begin rdoc
@@ -116,7 +117,7 @@ module CarrierWave
         # 根据配置返回完整的上传文件的访问地址
         def path_to_url(path, opts = {})
           if opts[:get]
-            "http://#{@aliyun_host}/#{path}"
+            "#{@aliyun_get_protocol}://#{@aliyun_host}/#{path}"
           else
             "http://#{@aliyun_upload_host}/#{path}"
           end
@@ -127,7 +128,7 @@ module CarrierWave
           canonicalized_oss_headers = ''
           canonicalized_resource = "/#{path}"
           string_to_sign = "#{verb}\n\n#{content_type}\n#{date}\n#{canonicalized_oss_headers}#{canonicalized_resource}"
-          digest = OpenSSL::Digest::Digest.new('sha1')
+          digest = OpenSSL::Digest.new('sha1')
           h = OpenSSL::HMAC.digest(digest, @aliyun_access_key, string_to_sign)
           h = Base64.encode64(h)
           "OSS #{@aliyun_access_id}:#{h}"
@@ -214,7 +215,8 @@ module CarrierWave
               :aliyun_area => @uploader.aliyun_area,
               :aliyun_bucket => @uploader.aliyun_bucket,
               :aliyun_internal => @uploader.aliyun_internal,
-              :aliyun_host => @uploader.aliyun_host
+              :aliyun_host => @uploader.aliyun_host,
+              :aliyun_get_protocol => @uploader.aliyun_get_protocol
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
           end
