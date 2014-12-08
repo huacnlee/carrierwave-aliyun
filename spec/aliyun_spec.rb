@@ -3,7 +3,7 @@ require "open-uri"
 require "net/http"
 
 describe "Aliyun" do
-  before(:all) do
+  before(:each) do
     @opts = {
       :aliyun_access_id => ALIYUN_ACCESS_ID,
       :aliyun_access_key => ALIYUN_ACCESS_KEY,
@@ -38,4 +38,12 @@ describe "Aliyun" do
     url = @connection.put("a/a.jpg",load_file("foo.jpg"))
     url.should == "http://foo.bar.com/a/a.jpg"
   end
+
+  it "should support https protocol" do
+    @opts[:aliyun_get_protocol] = "https"
+    @connection = CarrierWave::Storage::Aliyun::Connection.new(@opts)
+    url = @connection.put("a/a.jpg",load_file("foo.jpg"))
+    url.should == "https://#{ALIYUN_BUCKET}.oss-cn-hangzhou.aliyuncs.com/a/a.jpg"
+  end
+
 end
