@@ -127,7 +127,7 @@ module CarrierWave
           canonicalized_oss_headers = ''
           canonicalized_resource = "/#{path}"
           string_to_sign = "#{verb}\n\n#{content_type}\n#{date}\n#{canonicalized_oss_headers}#{canonicalized_resource}"
-          digest = OpenSSL::Digest::Digest.new('sha1')
+          digest = OpenSSL::Digest.new("sha1")
           h = OpenSSL::HMAC.digest(digest, @aliyun_access_key, string_to_sign)
           h = Base64.encode64(h)
           "OSS #{@aliyun_access_id}:#{h}"
