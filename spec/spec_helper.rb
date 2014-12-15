@@ -34,7 +34,8 @@ CarrierWave.configure do |config|
   config.aliyun_access_key = ALIYUN_ACCESS_KEY
   config.aliyun_bucket = ALIYUN_BUCKET
   config.aliyun_area = "cn-hangzhou"
-  # config.aliyun_internal = false
+  config.aliyun_internal = true
+  config.aliyun_host = "http://bison-dev.cn-hangzhou.oss.aliyun-inc.com"
 end
 
 def load_file(fname)

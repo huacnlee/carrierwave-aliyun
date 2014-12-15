@@ -11,91 +11,93 @@ module CarrierWave
 
       class Connection
         def initialize(options={})
-          @aliyun_access_id = options[:aliyun_access_id]
+          @aliyun_access_id  = options[:aliyun_access_id]
           @aliyun_access_key = options[:aliyun_access_key]
-          @aliyun_bucket = options[:aliyun_bucket]
-          @aliyun_area   = options[:aliyun_area] || 'cn-hangzhou'
+          @aliyun_bucket     = options[:aliyun_bucket]
+          @aliyun_area       = options[:aliyun_area] || 'cn-hangzhou'
+
           # Host for upload
-          @aliyun_upload_host = "#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
           if options[:aliyun_internal] == true
-            @aliyun_upload_host = "#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
+            @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
+          else
+            @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
           end
+          
           # Host for get request
-          @aliyun_host = options[:aliyun_host] || "#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+          @aliyun_host = options[:aliyun_host] || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+
+          if not @aliyun_host.include?("http")
+            raise "config.aliyun_host requirement include http:// or https://, but you give: #{@aliyun_host}"
+          end
         end
 
-=begin rdoc
-上传文件
-
-== 参数:
-- path - remote 存储路径
-- file - 需要上传文件的 File 对象
-- options:
-  - content_type - 上传文件的 MimeType，默认 `image/jpg`
-
-== 返回值:
-图片的下载地址
-=end
+        # 上传文件
+        # params:
+        # - path - remote 存储路径
+        # - file - 需要上传文件的 File 对象
+        # - options:
+        #   - content_type - 上传文件的 MimeType，默认 `image/jpg`
+        # returns:
+        # 图片的下载地址
         def put(path, file, options={})
-          path = format_path(path)
-          bucket_path = get_bucket_path(path)
-          content_md5 = Digest::MD5.file(file)
+          path         = format_path(path)
+          bucket_path  = get_bucket_path(path)
+          content_md5  = Digest::MD5.file(file)
           content_type = options[:content_type] || "image/jpg"
-          date = gmtdate
-          url = path_to_url(path)
-          auth_sign = sign("PUT", bucket_path, content_md5, content_type,date)
-          headers = {
-            "Authorization" => auth_sign,
-            "Content-Type" => content_type,
+          date         = gmtdate
+          url          = path_to_url(path)
+          
+          host = URI.parse(url).host
+
+          auth_sign    = sign("PUT", bucket_path, content_md5, content_type,date)
+          headers      = {
+            "Authorization"  => auth_sign,
+            "Content-Type"   => content_type,
             "Content-Length" => file.size,
-            "Date" => date,
-            "Host" => @aliyun_upload_host,
-            "Expect" => "100-Continue"
+            "Date"           => date,
+            "Host"           => host,
+            "Expect"         => "100-Continue"
           }
+
           RestClient.put(URI.encode(url).gsub("+", "%2B"), file, headers)
           return path_to_url(path, :get => true)
         end
 
-
-=begin rdoc
-读取文件
-
-== 参数:
-- path - remote 存储路径
-
-== 返回值:
-图片文件
-=end
+        # 读取文件
+        # params:
+        # - path - remote 存储路径
+        # returns:
+        # file data
         def get(path)
           path = format_path(path)
-          url = path_to_url(path)
+          url  = path_to_url(path)
           RestClient.get(URI.encode(url))
         end
 
-=begin rdoc
-删除 Remote 的文件
-
-== 参数:
-- path - remote 存储路径
-
-== 返回值:
-图片的下载地址
-=end
+        # 删除 Remote 的文件
+        #
+        # params:
+        # - path - remote 存储路径
+        #
+        # returns:
+        # 图片的下载地址
         def delete(path)
-          path = format_path(path)
+          path        = format_path(path)
           bucket_path = get_bucket_path(path)
-          date = gmtdate
-          headers = {
-            "Host" => @aliyun_upload_host,
-            "Date" => date,
+          date        = gmtdate
+          url         = path_to_url(path)
+          host        = URI.parse(url).host
+          headers     = {
+            "Host"          => host,
+            "Date"          => date,
             "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
           }
-          url = path_to_url(path)
+          
           RestClient.delete(URI.encode(url).gsub("+", "%2B"), headers)
           return path_to_url(path, :get => true)
         end
 
-        ##
+        #
         # 阿里云需要的 GMT 时间格式
         def gmtdate
           Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -116,18 +118,18 @@ module CarrierWave
         # 根据配置返回完整的上传文件的访问地址
         def path_to_url(path, opts = {})
           if opts[:get]
-            "http://#{@aliyun_host}/#{path}"
+            "#{@aliyun_host}/#{path}"
           else
-            "http://#{@aliyun_upload_host}/#{path}"
+            "#{@aliyun_upload_host}/#{path}"
           end
         end
 
-      private
+        private
         def sign(verb, path, content_md5 = '', content_type = '', date)
           canonicalized_oss_headers = ''
           canonicalized_resource = "/#{path}"
           string_to_sign = "#{verb}\n\n#{content_type}\n#{date}\n#{canonicalized_oss_headers}#{canonicalized_resource}"
-          digest = OpenSSL::Digest::Digest.new('sha1')
+          digest = OpenSSL::Digest.new('sha1')
           h = OpenSSL::HMAC.digest(digest, @aliyun_access_key, string_to_sign)
           h = Base64.encode64(h)
           "OSS #{@aliyun_access_id}:#{h}"
@@ -137,8 +139,8 @@ module CarrierWave
       class File
         def initialize(uploader, base, path)
           @uploader = uploader
-          @path = path
-          @base = base
+          @path     = path
+          @base     = base
         end
 
         ##
@@ -209,12 +211,12 @@ module CarrierWave
             return @oss_connection if @oss_connection
 
             config = {
-              :aliyun_access_id => @uploader.aliyun_access_id,
+              :aliyun_access_id  => @uploader.aliyun_access_id,
               :aliyun_access_key => @uploader.aliyun_access_key,
-              :aliyun_area => @uploader.aliyun_area,
-              :aliyun_bucket => @uploader.aliyun_bucket,
-              :aliyun_internal => @uploader.aliyun_internal,
-              :aliyun_host => @uploader.aliyun_host
+              :aliyun_area       => @uploader.aliyun_area,
+              :aliyun_bucket     => @uploader.aliyun_bucket,
+              :aliyun_internal   => @uploader.aliyun_internal,
+              :aliyun_host       => @uploader.aliyun_host
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
           end
