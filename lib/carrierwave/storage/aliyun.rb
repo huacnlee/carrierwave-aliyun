@@ -18,7 +18,8 @@ module CarrierWave
 
           # Host for upload
           if options[:aliyun_internal] == true
-            @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
+            # @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
+            @aliyun_upload_host = "http://#{@aliyun_bucket}.#{@aliyun_area}.oss.aliyun-inc.com"
           else
             @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
           end
