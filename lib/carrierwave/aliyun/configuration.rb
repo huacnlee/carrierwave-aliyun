@@ -9,6 +9,7 @@ module CarrierWave
         add_config :aliyun_area
         add_config :aliyun_internal
         add_config :aliyun_host
+        add_config :aliyun_internal_host
       end
     end
     
