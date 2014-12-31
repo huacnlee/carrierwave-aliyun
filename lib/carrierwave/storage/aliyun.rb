@@ -15,14 +15,17 @@ module CarrierWave
           @aliyun_access_key = options[:aliyun_access_key]
           @aliyun_bucket     = options[:aliyun_bucket]
           @aliyun_area       = options[:aliyun_area] || 'cn-hangzhou'
+          @aliyun_upload_host = options[:aliyun_upload_host]
 
           # Host for upload
-          if options[:aliyun_internal] == true
-            @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
-          else
-            @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+          if @aliyun_upload_host.nil?
+            if options[:aliyun_internal] == true
+              @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
+            else
+              @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+            end
           end
-          
+
           # Host for get request
           @aliyun_host = options[:aliyun_host] || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
 
@@ -216,7 +219,8 @@ module CarrierWave
               :aliyun_area       => @uploader.aliyun_area,
               :aliyun_bucket     => @uploader.aliyun_bucket,
               :aliyun_internal   => @uploader.aliyun_internal,
-              :aliyun_host       => @uploader.aliyun_host
+              :aliyun_host       => @uploader.aliyun_host,
+              :aliyun_upload_host => @uploader.aliyun_upload_host
             }
             @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
           end
