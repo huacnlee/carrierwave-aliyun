@@ -1,7 +1,7 @@
 module CarrierWave
   module Aliyun
     class Version
-      MAJOR, MINOR, PATCH = 0, 3, 2
+      MAJOR, MINOR, PATCH = 0, 3, 3
 
       ##
       # Returns the major version ( big release based off of multiple minor releases )

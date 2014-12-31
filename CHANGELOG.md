@@ -1,3 +1,7 @@
+## 0.3.3
+
+* 增加 `config.aliyun_upload_host`, 以便有需要的时候，可以自由修改上传的 host.
+
 ## 0.3.2
 
 * 请注意 `config.aliyun_host` 要求修改带 HTTP 协议，以便支持设置 http:// 或 https://.
