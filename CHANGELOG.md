@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Use OpenSSL::HMAC with Ruby 2.2.0.
+
 ## 0.3.3
 
 * 增加 `config.aliyun_upload_host`, 以便有需要的时候，可以自由修改上传的 host.
