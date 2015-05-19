@@ -19,7 +19,7 @@ gem 'carrierwave-aliyun'
 
 ## Configuration
 
-创建这么个脚本 `config/initializes/carrierwave.rb` 填入下面的代码，并修改对应的配置：
+创建这么个脚本 `config/initializers/carrierwave.rb` 填入下面的代码，并修改对应的配置：
 
 ```ruby
 CarrierWave.configure do |config|
@@ -38,6 +38,25 @@ CarrierWave.configure do |config|
   # 如果有需要，你可以自己定义上传 host, 比如阿里内部的上传地址和 Aliyun OSS 对外的不同，可以在这里定义，没有需要可以不用配置
   # config.aliyun_upload_host = "http://you_bucket_name.oss.aliyun-inc.com"
 end
+```
+
+在你的 Uploader 类中，把 storege 改为 `:aliyun`
+
+```ruby
+
+# encoding: utf-8
+
+class ApkfileUploader < CarrierWave::Uploader::Base
+
+  storage :aliyun
+ 
+  def store_dir
+    "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+  end
+
+end
+
+
 ```
 
 ## 跳过 CarrierWave 直接调用 Aliyun API
