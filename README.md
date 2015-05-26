@@ -10,6 +10,8 @@ This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](h
 gem install carrierwave-aliyun
 ```
 
+> NOTE: 此 Gem 是一个 CarrierWave 的组件，你需要配合 CarrierWave 一起使用。
+
 ## Using Bundler
 
 ```ruby

@@ -22,6 +22,7 @@ module Rails
 end
 
 ActiveRecord::Migration.verbose = false
+ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 # 测试的时候需要修改这个地方
 ALIYUN_ACCESS_ID = "osOXJ5VeQVgDLMs3"
