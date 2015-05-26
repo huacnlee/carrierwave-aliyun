@@ -1,3 +1,7 @@
+## 0.3.5
+
+* CarrierWave::Storage::Aliyun::File 继承 CarrierWave::SanitizedFile 以实现一些方法；
+
 ## 0.3.4
 
 * Use OpenSSL::HMAC with Ruby 2.2.0.
