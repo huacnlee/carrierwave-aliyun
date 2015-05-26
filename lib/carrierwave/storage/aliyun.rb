@@ -2,8 +2,8 @@
 require 'carrierwave'
 require 'digest/md5'
 require 'openssl'
-require "rest-client"
 require 'uri'
+require "rest-client"
 
 module CarrierWave
   module Storage
@@ -11,10 +11,10 @@ module CarrierWave
 
       class Connection
         def initialize(options={})
-          @aliyun_access_id  = options[:aliyun_access_id]
-          @aliyun_access_key = options[:aliyun_access_key]
-          @aliyun_bucket     = options[:aliyun_bucket]
-          @aliyun_area       = options[:aliyun_area] || 'cn-hangzhou'
+          @aliyun_access_id   = options[:aliyun_access_id]
+          @aliyun_access_key  = options[:aliyun_access_key]
+          @aliyun_bucket      = options[:aliyun_bucket]
+          @aliyun_area        = options[:aliyun_area] || 'cn-hangzhou'
           @aliyun_upload_host = options[:aliyun_upload_host]
 
           # Host for upload
@@ -139,7 +139,7 @@ module CarrierWave
         end
       end
 
-      class File
+      class File < CarrierWave::SanitizedFile
         def initialize(uploader, base, path)
           @uploader = uploader
           @path     = path

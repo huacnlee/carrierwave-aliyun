@@ -40,4 +40,12 @@ describe "Aliyun" do
     url = @connection.put("a/a.jpg",load_file("foo.jpg"))
     url.should == "http://foo.bar.com/a/a.jpg"
   end
+  
+  describe 'File' do
+    it 'should have respond_to identifier' do
+      f = CarrierWave::Storage::Aliyun::File.new(nil, nil, nil)
+      f.should respond_to(:identifier)
+      f.should respond_to(:filename)
+    end
+  end
 end
