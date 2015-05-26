@@ -21,7 +21,7 @@ gem 'carrierwave-aliyun'
 
 ## Configuration
 
-创建这么个脚本 `config/initializes/carrierwave.rb` 填入下面的代码，并修改对应的配置：
+创建这么个脚本 `config/initializers/carrierwave.rb` 填入下面的代码，并修改对应的配置：
 
 ```ruby
 CarrierWave.configure do |config|
