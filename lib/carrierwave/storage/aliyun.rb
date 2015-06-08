@@ -72,9 +72,20 @@ module CarrierWave
         # returns:
         # file data
         def get(path)
-          path = format_path(path)
-          url  = path_to_url(path)
-          RestClient.get(URI.encode(url))
+          path        = format_path(path)
+          bucket_path = get_bucket_path(path)
+          date        = gmtdate
+          url         = path_to_url(path)
+          host        = URI.parse(url).host
+          headers     = {
+            "Host"          => host,
+            "Date"          => date,
+            "Authorization" => sign("GET", bucket_path, "", "" ,date)
+          }
+
+          # path = format_path(path)
+          # url  = path_to_url(path)
+          RestClient.get(URI.encode(url), headers)
         end
 
         # 删除 Remote 的文件
