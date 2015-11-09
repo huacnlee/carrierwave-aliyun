@@ -1,3 +1,7 @@
+## 0.3.6
+
+* 修正上传中文文件名无法成功的问题；
+
 ## 0.3.5
 
 * CarrierWave::Storage::Aliyun::File 继承 CarrierWave::SanitizedFile 以实现一些方法；

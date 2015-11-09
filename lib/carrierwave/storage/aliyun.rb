@@ -49,7 +49,7 @@ module CarrierWave
           content_type = options[:content_type] || "image/jpg"
           date         = gmtdate
           url          = path_to_url(path)
-          
+
           host = URI.parse(url).host
 
           auth_sign    = sign("PUT", bucket_path, content_md5, content_type,date)
@@ -62,7 +62,7 @@ module CarrierWave
             "Expect"         => "100-Continue"
           }
 
-          RestClient.put(URI.encode(url).gsub("+", "%2B"), file, headers)
+          RestClient.put(url, file, headers)
           return path_to_url(path, :get => true)
         end
 
@@ -85,7 +85,7 @@ module CarrierWave
 
           # path = format_path(path)
           # url  = path_to_url(path)
-          RestClient.get(URI.encode(url), headers)
+          RestClient.get(url, headers)
         end
 
         # 删除 Remote 的文件
@@ -106,8 +106,8 @@ module CarrierWave
             "Date"          => date,
             "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
           }
-          
-          RestClient.delete(URI.encode(url).gsub("+", "%2B"), headers)
+
+          RestClient.delete(url, headers)
           return path_to_url(path, :get => true)
         end
 
@@ -141,7 +141,7 @@ module CarrierWave
         private
         def sign(verb, path, content_md5 = '', content_type = '', date)
           canonicalized_oss_headers = ''
-          canonicalized_resource = "/#{path}"
+          canonicalized_resource = "/#{URI.decode(path)}"
           string_to_sign = "#{verb}\n\n#{content_type}\n#{date}\n#{canonicalized_oss_headers}#{canonicalized_resource}"
           digest = OpenSSL::Digest.new('sha1')
           h = OpenSSL::HMAC.digest(digest, @aliyun_access_key, string_to_sign)
@@ -153,7 +153,7 @@ module CarrierWave
       class File < CarrierWave::SanitizedFile
         def initialize(uploader, base, path)
           @uploader = uploader
-          @path     = path
+          @path     = URI.encode(path)
           @base     = base
         end
 
