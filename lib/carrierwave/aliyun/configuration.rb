@@ -2,6 +2,7 @@ module CarrierWave
   module Aliyun
     module Configuration
       extend ActiveSupport::Concern
+
       included do
         add_config :aliyun_access_id
         add_config :aliyun_access_key
@@ -9,10 +10,10 @@ module CarrierWave
         add_config :aliyun_area
         add_config :aliyun_internal
         add_config :aliyun_host
-        add_config :aliyun_upload_host
+        add_config :aliyun_private_read
       end
     end
-    
+
     module ClassMethods
       def add_config(name)
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -33,7 +34,7 @@ module CarrierWave
             value.instance_of?(Proc) ? value.call : value
           end
         RUBY
-      end   
+      end
     end
   end
 end

@@ -1,3 +1,9 @@
+## 0.4.0
+
+* 采用 aliyun-oss-sdk 来作为上传后端，不再依赖 rest-client，不再内部实现上传逻辑；
+* 增加 `config.aliyun_private_read` 配置项，开启以后，返回的 @user.avatar.url 将会是带 Token 和有效期的 URL，可以用于访问私有读取空间的文件；
+* 去掉 `config.aliyun_upload_host` 配置项，删除了阿里内部的支持，以后请用 0.3.x 版本；
+
 ## 0.3.6
 
 * 修正上传中文文件名无法成功的问题；

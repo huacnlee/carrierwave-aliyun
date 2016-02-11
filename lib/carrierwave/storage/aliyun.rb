@@ -1,33 +1,23 @@
 # encoding: utf-8
+require 'aliyun/oss'
 require 'carrierwave'
-require 'digest/md5'
-require 'openssl'
 require 'uri'
-require "rest-client"
 
 module CarrierWave
   module Storage
     class Aliyun < Abstract
 
       class Connection
-        def initialize(options={})
-          @aliyun_access_id   = options[:aliyun_access_id]
-          @aliyun_access_key  = options[:aliyun_access_key]
-          @aliyun_bucket      = options[:aliyun_bucket]
-          @aliyun_area        = options[:aliyun_area] || 'cn-hangzhou'
-          @aliyun_upload_host = options[:aliyun_upload_host]
-
-          # Host for upload
-          if @aliyun_upload_host.nil?
-            if options[:aliyun_internal] == true
-              @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}-internal.aliyuncs.com"
-            else
-              @aliyun_upload_host = "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
-            end
-          end
+        def initialize(uploader)
+          @uploader = uploader
+          @aliyun_access_id    = uploader.aliyun_access_id
+          @aliyun_access_key   = uploader.aliyun_access_key
+          @aliyun_bucket       = uploader.aliyun_bucket
+          @aliyun_area         = uploader.aliyun_area || 'cn-hangzhou'
+          @aliyun_private_read = uploader.aliyun_private_read
 
           # Host for get request
-          @aliyun_host = options[:aliyun_host] || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+          @aliyun_host = uploader.aliyun_host || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
 
           if not @aliyun_host.include?("http")
             raise "config.aliyun_host requirement include http:// or https://, but you give: #{@aliyun_host}"
@@ -43,27 +33,17 @@ module CarrierWave
         # returns:
         # 图片的下载地址
         def put(path, file, options={})
-          path         = format_path(path)
-          bucket_path  = get_bucket_path(path)
-          content_md5  = Digest::MD5.file(file)
-          content_type = options[:content_type] || "image/jpg"
-          date         = gmtdate
-          url          = path_to_url(path)
-
-          host = URI.parse(url).host
-
-          auth_sign    = sign("PUT", bucket_path, content_md5, content_type,date)
-          headers      = {
-            "Authorization"  => auth_sign,
-            "Content-Type"   => content_type,
-            "Content-Length" => file.size,
-            "Date"           => date,
-            "Host"           => host,
-            "Expect"         => "100-Continue"
+          path.sub!(/^\//, '')
+          opts = {
+            'Content-Type' => options[:content_type] || "image/jpg"
           }
 
-          RestClient.put(url, file, headers)
-          return path_to_url(path, :get => true)
+          res = oss_upload_client.bucket_create_object(path, file, opts)
+          if res.success?
+            path_to_url(path)
+          else
+            raise "Put file failed"
+          end
         end
 
         # 读取文件
@@ -72,20 +52,13 @@ module CarrierWave
         # returns:
         # file data
         def get(path)
-          path        = format_path(path)
-          bucket_path = get_bucket_path(path)
-          date        = gmtdate
-          url         = path_to_url(path)
-          host        = URI.parse(url).host
-          headers     = {
-            "Host"          => host,
-            "Date"          => date,
-            "Authorization" => sign("GET", bucket_path, "", "" ,date)
-          }
-
-          # path = format_path(path)
-          # url  = path_to_url(path)
-          RestClient.get(url, headers)
+          path.sub!(/^\//, '')
+          res = oss_upload_client.bucket_get_object(path)
+          if res.success?
+            return res.parsed_response
+          else
+            raise "Get content faild"
+          end
         end
 
         # 删除 Remote 的文件
@@ -96,57 +69,53 @@ module CarrierWave
         # returns:
         # 图片的下载地址
         def delete(path)
-          path        = format_path(path)
-          bucket_path = get_bucket_path(path)
-          date        = gmtdate
-          url         = path_to_url(path)
-          host        = URI.parse(url).host
-          headers     = {
-            "Host"          => host,
-            "Date"          => date,
-            "Authorization" => sign("DELETE", bucket_path, "", "" ,date)
-          }
-
-          RestClient.delete(url, headers)
-          return path_to_url(path, :get => true)
-        end
-
-        #
-        # 阿里云需要的 GMT 时间格式
-        def gmtdate
-          Time.now.gmtime.strftime("%a, %d %b %Y %H:%M:%S GMT")
-        end
-
-        def format_path(path)
-          return "" if path.blank?
-          path.gsub!(/^\//,"")
-
-          path
-        end
-
-        def get_bucket_path(path)
-          [@aliyun_bucket,path].join("/")
+          path.sub!(/^\//, '')
+          res = oss_upload_client.bucket_delete_object(path)
+          if res.success?
+            return path_to_url(path)
+          else
+            raise "Delete failed"
+          end
         end
 
         ##
         # 根据配置返回完整的上传文件的访问地址
-        def path_to_url(path, opts = {})
-          if opts[:get]
-            "#{@aliyun_host}/#{path}"
-          else
-            "#{@aliyun_upload_host}/#{path}"
-          end
+        def path_to_url(path)
+          [@aliyun_host, path].join("/")
+        end
+
+        # 私有空间访问地址，会带上实时算出的 token 信息
+        # 有效期 3600s
+        def private_get_url(path)
+          path.sub!(/^\//, '')
+          oss_client.bucket_get_object_share_link(path, 3600)
         end
 
         private
-        def sign(verb, path, content_md5 = '', content_type = '', date)
-          canonicalized_oss_headers = ''
-          canonicalized_resource = "/#{URI.decode(path)}"
-          string_to_sign = "#{verb}\n\n#{content_type}\n#{date}\n#{canonicalized_oss_headers}#{canonicalized_resource}"
-          digest = OpenSSL::Digest.new('sha1')
-          h = OpenSSL::HMAC.digest(digest, @aliyun_access_key, string_to_sign)
-          h = Base64.encode64(h)
-          "OSS #{@aliyun_access_id}:#{h}"
+        def oss_client
+          return @oss_client if defined?(@oss_client)
+          opts = {
+            host: "oss-#{@aliyun_area}.aliyuncs.com",
+            bucket: @aliyun_bucket
+          }
+          @oss_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        end
+
+        def oss_upload_client
+          return @oss_upload_client if defined?(@oss_upload_client)
+
+          if @uploader.aliyun_internal
+            host = "oss-#{@aliyun_area}-internal.aliyuncs.com"
+          else
+            host = "oss-#{@aliyun_area}.aliyuncs.com"
+          end
+
+          opts = {
+            host: host,
+            bucket: @aliyun_bucket
+          }
+
+          @oss_upload_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
         end
       end
 
@@ -196,7 +165,11 @@ module CarrierWave
         end
 
         def url
-          oss_connection.path_to_url(@path, :get => true)
+          if @uploader.aliyun_private_read
+            oss_connection.private_get_url(@path)
+          else
+            oss_connection.path_to_url(@path)
+          end
         end
 
         def content_type
@@ -214,7 +187,7 @@ module CarrierWave
         private
 
           def headers
-            @headers ||= {  }
+            @headers ||= {}
           end
 
           def connection
@@ -222,18 +195,9 @@ module CarrierWave
           end
 
           def oss_connection
-            return @oss_connection if @oss_connection
+            return @oss_connection if defined? @oss_connection
 
-            config = {
-              :aliyun_access_id  => @uploader.aliyun_access_id,
-              :aliyun_access_key => @uploader.aliyun_access_key,
-              :aliyun_area       => @uploader.aliyun_area,
-              :aliyun_bucket     => @uploader.aliyun_bucket,
-              :aliyun_internal   => @uploader.aliyun_internal,
-              :aliyun_host       => @uploader.aliyun_host,
-              :aliyun_upload_host => @uploader.aliyun_upload_host
-            }
-            @oss_connection ||= CarrierWave::Storage::Aliyun::Connection.new(config)
+            @oss_connection = CarrierWave::Storage::Aliyun::Connection.new(@uploader)
           end
 
       end

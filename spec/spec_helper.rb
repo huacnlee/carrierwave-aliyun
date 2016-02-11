@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rspec'
-require 'rspec/autorun'
 require 'rails'
 require 'active_record'
 require "carrierwave"
@@ -25,18 +24,18 @@ ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 # 测试的时候需要修改这个地方
-ALIYUN_ACCESS_ID = "osOXJ5VeQVgDLMs3"
-ALIYUN_ACCESS_KEY = 'm2LSEotGzDFrtHLeG1e6OATUTQ5ypR'
-ALIYUN_BUCKET = "bison-dev"
+ALIYUN_ACCESS_ID = "1OpWEtPTjIDv5u8q"
+ALIYUN_ACCESS_KEY = 'cz12XgPfEVy8Xe9F9UJJHmVdHBJ9bi'
+ALIYUN_BUCKET = "carrierwave-aliyun-test"
+ALIYUN_AREA = "cn-beijing"
 
 CarrierWave.configure do |config|
   config.storage = :aliyun
   config.aliyun_access_id = ALIYUN_ACCESS_ID
   config.aliyun_access_key = ALIYUN_ACCESS_KEY
   config.aliyun_bucket = ALIYUN_BUCKET
-  config.aliyun_area = "cn-hangzhou"
-  config.aliyun_internal = true
-  config.aliyun_host = "http://bison-dev.cn-hangzhou.oss.aliyun-inc.com"
+  config.aliyun_area = ALIYUN_AREA
+  config.aliyun_internal = false
 end
 
 def load_file(fname)
