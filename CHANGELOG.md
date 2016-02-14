@@ -1,3 +1,7 @@
+## 0.4.1
+
+* 由于 aliyun-oss-sdk 目前不支持 internal 上传，暂时去掉，以免签名错误。
+
 ## 0.4.0
 
 * 采用 aliyun-oss-sdk 来作为上传后端，不再依赖 rest-client，不再内部实现上传逻辑；

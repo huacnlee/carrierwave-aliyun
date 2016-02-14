@@ -104,11 +104,8 @@ module CarrierWave
         def oss_upload_client
           return @oss_upload_client if defined?(@oss_upload_client)
 
-          if @uploader.aliyun_internal
-            host = "oss-#{@aliyun_area}-internal.aliyuncs.com"
-          else
-            host = "oss-#{@aliyun_area}.aliyuncs.com"
-          end
+          # TODO: 实现根据 config.aliyun_internal 来使用内部 host 上传
+          host = "oss-#{@aliyun_area}.aliyuncs.com"
 
           opts = {
             host: host,
