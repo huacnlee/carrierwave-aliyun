@@ -19,8 +19,8 @@ module CarrierWave
           # Host for get request
           @aliyun_host = uploader.aliyun_host || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
 
-          if not @aliyun_host.include?("http")
-            raise "config.aliyun_host requirement include http:// or https://, but you give: #{@aliyun_host}"
+          if not @aliyun_host.include?("//")
+            raise "config.aliyun_host requirement include // http:// or https://, but you give: #{@aliyun_host}"
           end
         end
 
