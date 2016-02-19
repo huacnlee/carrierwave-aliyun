@@ -1,3 +1,7 @@
+## 0.4.2
+
+* `config.aliyun_host` 现在支持配置 //you-host.com，以便同时支持 http 和 https。
+
 ## 0.4.1
 
 * 由于 aliyun-oss-sdk 目前不支持 internal 上传，暂时去掉，以免签名错误。
