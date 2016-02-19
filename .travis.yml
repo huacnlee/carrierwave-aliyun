@@ -6,4 +6,4 @@ rvm:
   - 2.1.0
   - 1.9.3
 
-script: RAILS_ENV=test bundle exec rake spec
+script: rspec spec
