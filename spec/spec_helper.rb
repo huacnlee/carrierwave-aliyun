@@ -24,10 +24,10 @@ ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.raise_in_transactional_callbacks = true
 
 # 测试的时候需要修改这个地方
-ALIYUN_ACCESS_ID = "1OpWEtPTjIDv5u8q"
-ALIYUN_ACCESS_KEY = 'cz12XgPfEVy8Xe9F9UJJHmVdHBJ9bi'
-ALIYUN_BUCKET = "carrierwave-aliyun-test"
-ALIYUN_AREA = "cn-beijing"
+ALIYUN_ACCESS_ID = ENV['ALIYUN_ACCESS_ID'] || ''
+ALIYUN_ACCESS_KEY = ENV['ALIYUN_ACCESS_KEY'] || ''
+ALIYUN_BUCKET = ENV['ALIYUN_BUCKET'] || 'carrierwave-aliyun-test'
+ALIYUN_AREA = ENV['ALIYUN_AREA'] || 'cn-beijing'
 
 CarrierWave.configure do |config|
   config.storage = :aliyun
