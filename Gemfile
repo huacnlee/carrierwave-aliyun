@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source "http://gems.ruby-china.org"
 
 gemspec
 
