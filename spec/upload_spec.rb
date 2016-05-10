@@ -9,10 +9,12 @@ describe "Upload" do
     ActiveRecord::Schema.define(:version => 1) do
       create_table :photos do |t|
         t.column :image, :string
+        t.column :content_type, :string
       end
 
       create_table :attachments do |t|
         t.column :file, :string
+        t.column :content_type, :string
       end
     end
   end
@@ -77,8 +79,10 @@ describe "Upload" do
       it "should get uploaded file" do
         img = open(@photo.image.url)
         expect(img.size).to eq @file.size
+        expect(img.content_type).to eq 'image/jpeg'
         img1 = open(@photo1.image.url)
         expect(img1.size).to eq @file1.size
+        expect(img1.content_type).to eq 'image/gif'
       end
 
       it "sholud get small version uploaded file" do
@@ -100,6 +104,7 @@ describe "Upload" do
       it "should get uploaded file" do
         attach = open(@attachment.file.url)
         expect(attach.size).to eq @file.size
+        expect(attach.content_type).to eq 'application/zip'
       end
 
       it "should delete old file when upload a new file again" do
