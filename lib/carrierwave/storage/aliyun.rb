@@ -1,4 +1,3 @@
-# encoding: utf-8
 require 'aliyun/oss'
 require 'carrierwave'
 require 'uri'
@@ -6,8 +5,9 @@ require 'uri'
 module CarrierWave
   module Storage
     class Aliyun < Abstract
-
       class Connection
+        PATH_PREFIX = %r{^/}
+
         def initialize(uploader)
           @uploader = uploader
           @aliyun_access_id    = uploader.aliyun_access_id
@@ -19,8 +19,8 @@ module CarrierWave
           # Host for get request
           @aliyun_host = uploader.aliyun_host || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
 
-          if not @aliyun_host.include?("//")
-            raise "config.aliyun_host requirement include // http:// or https://, but you give: #{@aliyun_host}"
+          unless @aliyun_host.include?('//')
+            fail "config.aliyun_host requirement include // http:// or https://, but you give: #{@aliyun_host}"
           end
         end
 
@@ -32,17 +32,17 @@ module CarrierWave
         #   - content_type - 上传文件的 MimeType，默认 `image/jpg`
         # returns:
         # 图片的下载地址
-        def put(path, file, options={})
-          path.sub!(/^\//, '')
+        def put(path, file, options = {})
+          path.sub!(PATH_PREFIX, '')
           opts = {
-            'Content-Type' => options[:content_type] || "image/jpg"
+            'Content-Type' => options[:content_type] || 'image/jpg'
           }
 
           res = oss_upload_client.bucket_create_object(path, file, opts)
           if res.success?
             path_to_url(path)
           else
-            raise "Put file failed"
+            fail 'Put file failed'
           end
         end
 
@@ -52,12 +52,12 @@ module CarrierWave
         # returns:
         # file data
         def get(path)
-          path.sub!(/^\//, '')
+          path.sub!(PATH_PREFIX, '')
           res = oss_upload_client.bucket_get_object(path)
           if res.success?
             return res.parsed_response
           else
-            raise "Get content faild"
+            fail 'Get content faild'
           end
         end
 
@@ -69,29 +69,30 @@ module CarrierWave
         # returns:
         # 图片的下载地址
         def delete(path)
-          path.sub!(/^\//, '')
+          path.sub!(PATH_PREFIX, '')
           res = oss_upload_client.bucket_delete_object(path)
           if res.success?
             return path_to_url(path)
           else
-            raise "Delete failed"
+            fail 'Delete failed'
           end
         end
 
         ##
         # 根据配置返回完整的上传文件的访问地址
         def path_to_url(path)
-          [@aliyun_host, path].join("/")
+          [@aliyun_host, path].join('/')
         end
 
         # 私有空间访问地址，会带上实时算出的 token 信息
         # 有效期 3600s
         def private_get_url(path)
-          path.sub!(/^\//, '')
+          path.sub!(PATH_PREFIX, '')
           oss_client.bucket_get_object_share_link(path, 3600)
         end
 
         private
+
         def oss_client
           return @oss_client if defined?(@oss_client)
           opts = {
@@ -117,12 +118,6 @@ module CarrierWave
       end
 
       class File < CarrierWave::SanitizedFile
-        def initialize(uploader, base, path)
-          @uploader = uploader
-          @path     = URI.encode(path)
-          @base     = base
-        end
-
         ##
         # Returns the current path/filename of the file on Cloud Files.
         #
@@ -130,8 +125,12 @@ module CarrierWave
         #
         # [String] A path
         #
-        def path
-          @path
+        attr_reader :path
+
+        def initialize(uploader, base, path)
+          @uploader = uploader
+          @path     = URI.encode(path)
+          @base     = base
         end
 
         ##
@@ -151,14 +150,12 @@ module CarrierWave
         # Remove the file from Cloud Files
         #
         def delete
-          begin
-            oss_connection.delete(@path)
-            true
-          rescue Exception => e
-            # If the file's not there, don't panic
-            puts "carrierwave-aliyun delete file failed: #{e}"
-            nil
-          end
+          oss_connection.delete(@path)
+          true
+        rescue => e
+          # If the file's not there, don't panic
+          puts "carrierwave-aliyun delete file failed: #{e}"
+          nil
         end
 
         def url
@@ -183,25 +180,24 @@ module CarrierWave
 
         private
 
-          def headers
-            @headers ||= {}
-          end
+        def headers
+          @headers ||= {}
+        end
 
-          def connection
-            @base.connection
-          end
+        def connection
+          @base.connection
+        end
 
-          def oss_connection
-            return @oss_connection if defined? @oss_connection
+        def oss_connection
+          return @oss_connection if defined? @oss_connection
 
-            @oss_connection = CarrierWave::Storage::Aliyun::Connection.new(@uploader)
-          end
-
+          @oss_connection = CarrierWave::Storage::Aliyun::Connection.new(@uploader)
+        end
       end
 
       def store!(file)
         f = CarrierWave::Storage::Aliyun::File.new(uploader, self, uploader.store_path)
-        f.store(::File.open(file.file), :content_type => file.content_type)
+        f.store(::File.open(file.file), content_type: file.content_type)
         f
       end
 

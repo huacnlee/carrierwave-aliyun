@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    carrierwave-aliyun (0.4.3)
+    carrierwave-aliyun (0.4.4)
       aliyun-oss-sdk (>= 0.1.6)
       carrierwave (>= 0.5.7)
 
@@ -50,11 +50,12 @@ GEM
       httparty
     arel (6.0.3)
     builder (3.2.2)
-    carrierwave (0.10.0)
+    carrierwave (0.11.2)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
       json (>= 1.7)
       mime-types (>= 1.16)
+      mimemagic (>= 0.3.0)
     concurrent-ruby (1.0.1)
     diff-lcs (1.2.5)
     erubis (2.7.0)
@@ -72,6 +73,7 @@ GEM
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     mime-types (2.99.1)
+    mimemagic (0.3.1)
     mini_magick (4.4.0)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
