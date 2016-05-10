@@ -6,7 +6,7 @@ PATH
       carrierwave (>= 0.5.7)
 
 GEM
-  remote: http://gems.ruby-china.org/
+  remote: https://rubygems.org/
   specs:
     actionmailer (4.2.0)
       actionpack (= 4.2.0)
