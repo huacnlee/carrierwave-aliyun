@@ -15,6 +15,7 @@ module CarrierWave
           @aliyun_bucket       = uploader.aliyun_bucket
           @aliyun_area         = uploader.aliyun_area || 'cn-hangzhou'
           @aliyun_private_read = uploader.aliyun_private_read
+          @aliyun_internal     = uploader.aliyun_internal
 
           # Host for get request
           @aliyun_host = uploader.aliyun_host || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
@@ -105,8 +106,11 @@ module CarrierWave
         def oss_upload_client
           return @oss_upload_client if defined?(@oss_upload_client)
 
-          # TODO: 实现根据 config.aliyun_internal 来使用内部 host 上传
-          host = "oss-#{@aliyun_area}.aliyuncs.com"
+          if @aliyun_internal
+            host = "oss-#{@aliyun_area}-internal.aliyuncs.com"
+          else
+            host = "oss-#{@aliyun_area}.aliyuncs.com"
+          end
 
           opts = {
             host: host,
