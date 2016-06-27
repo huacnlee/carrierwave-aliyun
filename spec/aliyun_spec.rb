@@ -8,14 +8,24 @@ describe "Aliyun" do
       :aliyun_access_id => ALIYUN_ACCESS_ID,
       :aliyun_access_key => ALIYUN_ACCESS_KEY,
       :aliyun_bucket => ALIYUN_BUCKET,
-      :aliyun_area => "cn-hangzhou",
-      :aliyun_internal => true,
+      :aliyun_area => ALIYUN_AREA,
+      :aliyun_internal => false,
       :aliyun_host => "http://bison-dev.cn-hangzhou.oss.aliyun-inc.com"
     }
 
     @uploader = CarrierWave::Uploader::Base.new
     @connection = CarrierWave::Storage::Aliyun::Connection.new(@uploader)
   end
+
+  # it "should put by internal network" do
+  #   @uploader.aliyun_internal = true
+  #   @connection = CarrierWave::Storage::Aliyun::Connection.new(@uploader)
+  #   puts @connection.to_json
+  #   url = @connection.put("/a/a.jpg",load_file("foo.jpg"))
+  #   res = Net::HTTP.get_response(URI.parse(url))
+  #   puts res.to_json
+  #   expect(res.code).to eq "200"
+  # end
 
   it "should put" do
     url = @connection.put("a/a.jpg",load_file("foo.jpg"))
@@ -56,7 +66,7 @@ describe "Aliyun" do
       url = @connection.private_get_url('bar/foo.jpg')
       # http://oss-cn-beijing.aliyuncs.com.//carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com/bar/foo.jpg?OSSAccessKeyId=1OpWEtPTjIDv5u8q&Expires=1455172009&Signature=4ibgQpfHOjVpqxG6162S8Ar3c6c=
       expect(url).to include(*%w(Signature Expires OSSAccessKeyId))
-      expect(url).to include "http://#{@uploader.aliyun_bucket}.oss-cn-beijing.aliyuncs.com/bar/foo.jpg"
+      expect(url).to include "http://#{@uploader.aliyun_bucket}.oss-#{@uploader.aliyun_area}.aliyuncs.com/bar/foo.jpg"
     end
 
     it "should get url with :thumb" do
