@@ -58,6 +58,11 @@ describe "Aliyun" do
       expect(url).to include(*%w(Signature Expires OSSAccessKeyId))
       expect(url).to include "http://#{@uploader.aliyun_bucket}.oss-cn-beijing.aliyuncs.com/bar/foo.jpg"
     end
+
+    it "should get url with :thumb" do
+      url = @connection.private_get_url('bar/foo.jpg', thumb: '@100w_200h_90q')
+      expect(url).to include "http://#{@uploader.aliyun_bucket}.img-cn-beijing.aliyuncs.com/bar/foo.jpg@100w_200h_90q"
+    end
   end
 
   describe 'File' do

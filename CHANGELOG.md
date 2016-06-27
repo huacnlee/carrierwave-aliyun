@@ -1,3 +1,8 @@
+## 0.5.0
+
+- 增加 Aliyun OSS 图片处理参数的支持，允许 url 传入 `:thumb` 以生成缩略图 URL；
+- 配置项增加 `config.aliyun_img_host`。
+
 ## 0.4.4
 
 - 修正对 Carrierwave master 版本的支持，它们[移除了](https://github.com/carrierwaveuploader/carrierwave/pull/1813) `carrierwave/processing/mime_types`；

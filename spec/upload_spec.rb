@@ -89,6 +89,18 @@ describe "Upload" do
         expect(open(@photo.image.small.url)).not_to eq nil
         expect(open(@photo1.image.small.url)).not_to eq nil
       end
+
+      it "should get Aliyun OSS thumb url with :thumb option" do
+        url = @photo.image.url(thumb: '@150w_140h.png')
+        expect(url).to include('.img-')
+        expect(url).to include('@150w_140h.png')
+        url1 = @photo.image.url(thumb: '@!150w_140h.jpg')
+        expect(url1).to include('.img-')
+        expect(url1).to include('@!150w_140h.jpg')
+        img1 = open(url)
+        expect(img1.size).not_to eq 0
+        expect(img1.content_type).to eq 'image/png'
+      end
     end
 
     context "should update zip" do

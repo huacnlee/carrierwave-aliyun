@@ -18,6 +18,7 @@ module CarrierWave
 
           # Host for get request
           @aliyun_host = uploader.aliyun_host || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+          @aliyun_img_host = uploader.aliyun_img_host || "http://#{@aliyun_bucket}.img-#{@aliyun_area}.aliyuncs.com"
 
           unless @aliyun_host.include?('//')
             fail "config.aliyun_host requirement include // http:// or https://, but you give: #{@aliyun_host}"
@@ -80,15 +81,25 @@ module CarrierWave
 
         ##
         # 根据配置返回完整的上传文件的访问地址
-        def path_to_url(path)
-          [@aliyun_host, path].join('/')
+        def path_to_url(path, opts = {})
+          if opts[:thumb]
+            thumb_path = [path, opts[:thumb]].join('')
+            [@aliyun_img_host, thumb_path].join('/')
+          else
+            [@aliyun_host, path].join('/')
+          end
         end
 
         # 私有空间访问地址，会带上实时算出的 token 信息
         # 有效期 3600s
-        def private_get_url(path)
+        def private_get_url(path, opts = {})
           path.sub!(PATH_PREFIX, '')
-          oss_client.bucket_get_object_share_link(path, 3600)
+          if opts[:thumb]
+            thumb_path = [path, opts[:thumb]].join('')
+            img_client.bucket_get_object_share_link(thumb_path, 3600)
+          else
+            oss_client.bucket_get_object_share_link(path, 3600)
+          end
         end
 
         private
@@ -100,6 +111,15 @@ module CarrierWave
             bucket: @aliyun_bucket
           }
           @oss_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        end
+
+        def img_client
+          return @img_client if defined?(@img_client)
+          opts = {
+            host: "img-#{@aliyun_area}.aliyuncs.com",
+            bucket: @aliyun_bucket
+          }
+          @img_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
         end
 
         def oss_upload_client
@@ -158,11 +178,16 @@ module CarrierWave
           nil
         end
 
-        def url
+        ##
+        # Generate file url
+        # params
+        #    :thumb - Aliyun OSS Image Processor option, etc: @100w_200h_95q
+        #
+        def url(opts = {})
           if @uploader.aliyun_private_read
-            oss_connection.private_get_url(@path)
+            oss_connection.private_get_url(@path, opts)
           else
-            oss_connection.path_to_url(@path)
+            oss_connection.path_to_url(@path, opts)
           end
         end
 
