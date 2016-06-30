@@ -1,3 +1,9 @@
+## 0.6.0
+
+- 调整，优化类结构:
+  - `CarrierWave::Storage::Aliyun::Connection` -> `CarrierWave::Aliyun::Bucket`
+  - `CarrierWave::Storage::Aliyun::File` -> `CarrierWave::Storage::AliyunFile`
+
 ## 0.5.1
 
 - 修正 Aliyun 内部网络上传的支持；(#36)

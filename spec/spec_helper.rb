@@ -2,28 +2,30 @@ require 'rubygems'
 require 'rspec'
 require 'rails'
 require 'active_record'
-require "carrierwave"
+require 'carrierwave'
 require 'carrierwave/orm/activerecord'
 require 'carrierwave/processing/mini_magick'
+require 'open-uri'
+require 'net/http'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-require "carrierwave-aliyun"
-
+require 'carrierwave-aliyun'
 
 module Rails
   class <<self
     def root
-      [File.expand_path(__FILE__).split('/')[0..-3].join('/'),"spec"].join("/")
+      [File.expand_path(__FILE__).split('/')[0..-3].join('/'), 'spec'].join('/')
     end
   end
 end
 
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.raise_in_transactional_callbacks = true
+ActiveRecord::Base.establish_connection(adapter: 'sqlite3',
+                                        database: ':memory:')
 
-# 测试的时候需要修改这个地方
 ALIYUN_ACCESS_ID = ENV['ALIYUN_ACCESS_ID'] || ''
 ALIYUN_ACCESS_KEY = ENV['ALIYUN_ACCESS_KEY'] || ''
 ALIYUN_BUCKET = ENV['ALIYUN_BUCKET'] || 'carrierwave-aliyun-test'
@@ -39,5 +41,5 @@ CarrierWave.configure do |config|
 end
 
 def load_file(fname)
-  File.open([Rails.root,fname].join("/"))
+  File.open([Rails.root, fname].join('/'))
 end
