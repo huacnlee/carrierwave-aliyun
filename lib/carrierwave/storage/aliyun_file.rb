@@ -45,8 +45,8 @@ module CarrierWave
         headers[:content_type] = new_content_type
       end
 
-      def store(file, opts = {})
-        bucket.put(@path, file, opts)
+      def store(file, headers = {})
+        bucket.put(@path, file, headers)
       end
 
       private
