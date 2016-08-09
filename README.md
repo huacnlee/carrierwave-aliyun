@@ -55,3 +55,22 @@ https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c_95q
 # 你也可以用自定义的缩略图格式
 irb> User.last.avatar.url(thumb: '@!large')
 ```
+
+## 增对文件设置 Content-Disposition
+
+在文件上传的场景（非图片），你可能需要给上传的文件设置 Content-Disposition 以便于用户直接访问 URL 的时候能够用你期望的文件名或原文件名来下载并保存。
+
+这个时候你需要给 Uploader 实现 `content_disposition` 函数，例如：
+
+```rb
+# app/uploaders/attachment_uploader.rb
+class AttachmentUploader < CarrierWave::Uploader::Base
+  def content_disposition
+    # 非图片文件，给 content_disposition
+    unless file.extension.downcase.in?(%w(jpg jpeg gif png svg))
+      "attachment;filename=#{file.original_filename}"
+    end
+  end
+end
+
+```

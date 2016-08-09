@@ -24,17 +24,22 @@ module CarrierWave
       # params:
       # - path - remote 存储路径
       # - file - 需要上传文件的 File 对象
-      # - options:
+      # - opts:
       #   - content_type - 上传文件的 MimeType，默认 `image/jpg`
+      #   - content_disposition - Content-Disposition
       # returns:
       # 图片的下载地址
-      def put(path, file, options = {})
+      def put(path, file, opts = {})
         path.sub!(PATH_PREFIX, '')
-        opts = {
-          'Content-Type' => options[:content_type] || 'image/jpg'
-        }
 
-        res = oss_upload_client.bucket_create_object(path, file, opts)
+        headers = {}
+        headers['Content-Type'] = opts[:content_type] || 'image/jpg'
+        content_disposition = opts[:content_disposition]
+        if content_disposition
+          headers['Content-Disposition'] = content_disposition
+        end
+
+        res = oss_upload_client.bucket_create_object(path, file, headers)
         if res.success?
           path_to_url(path)
         else

@@ -39,6 +39,10 @@ describe 'Upload' do
     def store_dir
       'attachs'
     end
+
+    def content_disposition
+      "attachment;filename=#{file.original_filename}"
+    end
   end
 
   class Photo < ActiveRecord::Base
@@ -116,6 +120,7 @@ describe 'Upload' do
         attach = open(@attachment.file.url)
         expect(attach.size).to eq @file.size
         expect(attach.content_type).to eq 'application/zip'
+        expect(attach.meta['content-disposition']).to eq 'attachment;filename=foo.zip'
       end
 
       it 'should delete old file when upload a new file again' do
