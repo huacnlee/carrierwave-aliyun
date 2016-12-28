@@ -1,3 +1,7 @@
+## 0.7.1
+
+- Fix Storage's read. (#41)
+
 ## 0.7.0
 
 - 支持设置 Content-Disposition;
