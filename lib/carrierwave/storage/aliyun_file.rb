@@ -12,7 +12,7 @@ module CarrierWave
       def read
         object = bucket.get(@path)
         @headers = object.headers
-        object.body
+        object
       end
 
       def delete
