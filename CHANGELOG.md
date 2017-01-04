@@ -1,3 +1,7 @@
+## 0.7.2
+
+- 在用户未设置 `aliyun_host` 的时候，默认返回 https 协议的 aliyun 主机地址。(#42)
+
 ## 0.7.1
 
 - Fix Storage's read. (#41)

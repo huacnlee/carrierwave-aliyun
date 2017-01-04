@@ -29,9 +29,9 @@ CarrierWave.configure do |config|
   # config.aliyun_area     = "cn-hangzhou"
   # 使用自定义域名，设定此项，carrierwave 返回的 URL 将会用自定义域名
   # 自定于域名请 CNAME 到 you_bucket_name.oss-cn-hangzhou.aliyuncs.com (you_bucket_name 是你的 bucket 的名称)
-  config.aliyun_host       = "http://foo.bar.com"
+  config.aliyun_host       = "https://foo.bar.com"
   # 配置缩略图 Host，默认 #{aliyun_bucket}.img-#{aliyun_area}.aliyuncs.com
-  # config.aliyun_img_host   = "http://you_bucket_name.img-cn-hangzhou.aliyuncs.com"
+  # config.aliyun_img_host   = "https://you_bucket_name.img-cn-hangzhou.aliyuncs.com"
   # Bucket 为私有读取请设置 true，默认 false，以便得到的 URL 是能带有 private 空间访问权限的逻辑
   # config.aliyun_private_read = false
 end

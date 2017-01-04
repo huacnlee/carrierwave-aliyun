@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rspec'
-require 'rails'
 require 'active_record'
 require 'carrierwave'
 require 'carrierwave/orm/activerecord'
@@ -22,7 +21,6 @@ module Rails
 end
 
 ActiveRecord::Migration.verbose = false
-ActiveRecord::Base.raise_in_transactional_callbacks = true
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3',
                                         database: ':memory:')
 
