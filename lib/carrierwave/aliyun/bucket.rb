@@ -12,8 +12,8 @@ module CarrierWave
         @aliyun_internal     = uploader.aliyun_internal
 
         # Host for get request
-        @aliyun_host = uploader.aliyun_host || "http://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
-        @aliyun_img_host = uploader.aliyun_img_host || "http://#{@aliyun_bucket}.img-#{@aliyun_area}.aliyuncs.com"
+        @aliyun_host = uploader.aliyun_host || "https://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
+        @aliyun_img_host = uploader.aliyun_img_host || "https://#{@aliyun_bucket}.img-#{@aliyun_area}.aliyuncs.com"
 
         unless @aliyun_host.include?('//')
           raise "config.aliyun_host requirement include // http:// or https://, but you give: #{@aliyun_host}"
