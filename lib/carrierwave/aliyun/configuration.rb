@@ -10,7 +10,6 @@ module CarrierWave
         add_config :aliyun_area
         add_config :aliyun_internal
         add_config :aliyun_host
-        add_config :aliyun_img_host
         add_config :aliyun_private_read
 
         configure do |config|

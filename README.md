@@ -30,8 +30,6 @@ CarrierWave.configure do |config|
   # 使用自定义域名，设定此项，carrierwave 返回的 URL 将会用自定义域名
   # 自定于域名请 CNAME 到 you_bucket_name.oss-cn-hangzhou.aliyuncs.com (you_bucket_name 是你的 bucket 的名称)
   config.aliyun_host       = "https://foo.bar.com"
-  # 配置缩略图 Host，默认 #{aliyun_bucket}.img-#{aliyun_area}.aliyuncs.com
-  # config.aliyun_img_host   = "https://you_bucket_name.img-cn-hangzhou.aliyuncs.com"
   # Bucket 为私有读取请设置 true，默认 false，以便得到的 URL 是能带有 private 空间访问权限的逻辑
   # config.aliyun_private_read = false
 end
@@ -43,17 +41,13 @@ end
 
 > NOTE: 此方法同样支持 Private 的 Bucket 哦！
 
-关于阿里云 OSS 图片缩略图的详细文档，请仔细阅读: [Aliyun OSS 接入图片服务](https://help.aliyun.com/document_detail/32210.html)
+关于阿里云 OSS 图片缩略图的详细文档，请仔细阅读: [Aliyun OSS 接入图片服务](https://help.aliyun.com/document_detail/44688.html)
 
 ```rb
-irb> User.last.avatar.url(thumb: '@100w_1c')
-https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_1c
-irb> User.last.avatar.url(thumb: '@100w_200h_1c.jpg')
-https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c.jpg
-irb> User.last.avatar.url(thumb: '@100w_200h_1c_95q')
-https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c_95q
-# 你也可以用自定义的缩略图格式
-irb> User.last.avatar.url(thumb: '@!large')
+irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100')
+https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100
+irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100,w_100')
+https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100,w_100
 ```
 
 ## 增对文件设置 Content-Disposition
