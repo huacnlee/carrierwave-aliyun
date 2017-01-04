@@ -1,7 +1,7 @@
 language: ruby
-bundler_args: --without development
 
 rvm:
   - 2.3.0
+  - 2.4.0
 
-script: rspec spec
+script: bundle exec rspec spec
