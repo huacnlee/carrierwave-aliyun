@@ -47,11 +47,11 @@ end
 
 ```rb
 irb> User.last.avatar.url(thumb: '@100w_1c')
-https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_1c
+"https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_1c"
 irb> User.last.avatar.url(thumb: '@100w_200h_1c.jpg')
-https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c.jpg
+"https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c.jpg"
 irb> User.last.avatar.url(thumb: '@100w_200h_1c_95q')
-https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c_95q
+"https://simple.img-cn-hangzhou.aliyuncs.com/users/avatar/12.png@100w_200h_1c_95q"
 # 你也可以用自定义的缩略图格式
 irb> User.last.avatar.url(thumb: '@!large')
 ```
