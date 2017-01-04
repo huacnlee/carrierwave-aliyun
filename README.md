@@ -37,17 +37,15 @@ end
 
 ## 阿里云 OSS 图片缩略图
 
-从 **0.5.0** 版本开始，carrierwave-aliyun 支持 Aliyun OSS 的图片缩略图了，你只需要在 Uploader 对象的 `url` 函数后面跟上 `:thumb` 附带缩略图参数就可以了。
-
 > NOTE: 此方法同样支持 Private 的 Bucket 哦！
 
 关于阿里云 OSS 图片缩略图的详细文档，请仔细阅读: [Aliyun OSS 接入图片服务](https://help.aliyun.com/document_detail/44688.html)
 
 ```rb
 irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100')
-https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100
+"https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100"
 irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100,w_100')
-https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100,w_100
+"https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100,w_100"
 ```
 
 ## 增对文件设置 Content-Disposition
