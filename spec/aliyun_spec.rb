@@ -8,7 +8,7 @@ describe 'Aliyun' do
       aliyun_bucket: ALIYUN_BUCKET,
       aliyun_area: ALIYUN_AREA,
       aliyun_internal: false,
-      aliyun_host: 'http://test.cn-hangzhou.oss.aliyun-inc.com'
+      aliyun_host: 'https://test.cn-hangzhou.oss.aliyun-inc.com'
     }
 
     @uploader = CarrierWave::Uploader::Base.new
@@ -64,12 +64,12 @@ describe 'Aliyun' do
       url = @bucket.private_get_url('bar/foo.jpg')
       # http://oss-cn-beijing.aliyuncs.com.//carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com/bar/foo.jpg?OSSAccessKeyId=1OpWEtPTjIDv5u8q&Expires=1455172009&Signature=4ibgQpfHOjVpqxG6162S8Ar3c6c=
       expect(url).to include(*%w(Signature Expires OSSAccessKeyId))
-      expect(url).to include "http://#{@uploader.aliyun_bucket}.oss-#{@uploader.aliyun_area}.aliyuncs.com/bar/foo.jpg"
+      expect(url).to include "https://#{@uploader.aliyun_bucket}.oss-#{@uploader.aliyun_area}.aliyuncs.com/bar/foo.jpg"
     end
 
     it 'should get url with :thumb' do
       url = @bucket.private_get_url('bar/foo.jpg', thumb: '@100w_200h_90q')
-      expect(url).to include "http://#{@uploader.aliyun_bucket}.img-cn-beijing.aliyuncs.com/bar/foo.jpg@100w_200h_90q"
+      expect(url).to include "https://#{@uploader.aliyun_bucket}.img-cn-beijing.aliyuncs.com/bar/foo.jpg@100w_200h_90q"
     end
   end
 
