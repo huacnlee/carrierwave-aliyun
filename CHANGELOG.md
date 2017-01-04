@@ -1,4 +1,4 @@
-## 0.8.0
+## 0.8.1
 
 - 去掉 `aliyun_img_host` 的配置项，不再需要了，Aliyun OSS 的 Bucket 域名以及默认执行图片处理协议，详见：[图片处理指南](https://help.aliyun.com/document_detail/44688.html).
 - 在用户未设置 `aliyun_host` 的时候，默认返回 https 协议的 aliyun 主机地址。(#42)
