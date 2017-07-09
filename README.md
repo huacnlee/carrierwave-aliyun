@@ -64,16 +64,17 @@ irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100,w_100')
 
 在文件上传的场景（非图片），你可能需要给上传的文件设置 Content-Disposition 以便于用户直接访问 URL 的时候能够用你期望的文件名或原文件名来下载并保存。
 
-这个时候你需要给 设置`content_disposition` headers，例如：
+这个时候你需要设置 `content_disposition` headers，例如：
 
-```rb
+```ruby
 # config/initializers/carrierwave.rb
 CarrierWave.configure do |config|
   config.custom_headers = -> (uploader) {
     {}.tap do |headers|
-      # 非图片文件，给 content_disposition
-      if uploader.is_a?(SomeUploader) && %w(jpg jpeg gif png svg).exclude?(uploader.file.extension.downcase)
+      # 非图片文件，设置 `content_disposition` headers
+      if uploader.is_a?(SomeUploader) && uploader.file.extension.downcase.in?(%w(jpg jpeg gif png svg))
         headers[:content_disposition] = "attachment;filename=#{uploader.file.original_filename}"
+      end
     end
   }
 end
