@@ -8,7 +8,7 @@ describe 'Aliyun' do
       aliyun_bucket: ALIYUN_BUCKET,
       aliyun_area: ALIYUN_AREA,
       aliyun_internal: false,
-      aliyun_host: 'https://test.cn-hangzhou.oss.aliyun-inc.com'
+      aliyun_host: ALIYUN_HOST
     }
 
     @uploader = CarrierWave::Uploader::Base.new
@@ -69,7 +69,7 @@ describe 'Aliyun' do
 
     it 'should get url with :thumb' do
       url = @bucket.private_get_url('bar/foo.jpg', thumb: '@100w_200h_90q')
-      expect(url).to include "https://#{@uploader.aliyun_bucket}.img-cn-beijing.aliyuncs.com/bar/foo.jpg@100w_200h_90q"
+      expect(url).to include "https://#{@uploader.aliyun_bucket}.img-#{@uploader.aliyun_area}.aliyuncs.com/bar/foo.jpg@100w_200h_90q"
     end
   end
 

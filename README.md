@@ -32,6 +32,18 @@ CarrierWave.configure do |config|
   config.aliyun_host       = "https://foo.bar.com"
   # Bucket 为私有读取请设置 true，默认 false，以便得到的 URL 是能带有 private 空间访问权限的逻辑
   # config.aliyun_private_read = false
+
+  # 设置 File object 的 headers, 可以是 Hash 或 Proc。
+  # PS: OSS支持个别文件类型的gzip功能，可以通过设置`content_type`来实现。
+  config.custom_headers    = -> (uploader) {
+    file = uploader.file
+    {}.tap do |headers|
+      headers[:content_type] = 'application/rss+xml' if file.content_type == 'application/xml'
+      unless file.extension.downcase.in?(%w(jpg jpeg gif png svg))
+        headers[:content_disposition] = "attachment;filename=#{file.original_filename}"
+      end
+    end
+  }
 end
 ```
 
@@ -52,17 +64,17 @@ irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100,w_100')
 
 在文件上传的场景（非图片），你可能需要给上传的文件设置 Content-Disposition 以便于用户直接访问 URL 的时候能够用你期望的文件名或原文件名来下载并保存。
 
-这个时候你需要给 Uploader 实现 `content_disposition` 函数，例如：
+这个时候你需要给 设置`content_disposition` headers，例如：
 
 ```rb
-# app/uploaders/attachment_uploader.rb
-class AttachmentUploader < CarrierWave::Uploader::Base
-  def content_disposition
-    # 非图片文件，给 content_disposition
-    unless file.extension.downcase.in?(%w(jpg jpeg gif png svg))
-      "attachment;filename=#{file.original_filename}"
+# config/initializers/carrierwave.rb
+CarrierWave.configure do |config|
+  config.custom_headers = -> (uploader) {
+    {}.tap do |headers|
+      # 非图片文件，给 content_disposition
+      if uploader.is_a?(SomeUploader) && %w(jpg jpeg gif png svg).exclude?(uploader.file.extension.downcase)
+        headers[:content_disposition] = "attachment;filename=#{uploader.file.original_filename}"
     end
-  end
+  }
 end
-
 ```

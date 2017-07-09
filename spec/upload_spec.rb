@@ -39,10 +39,6 @@ describe 'Upload' do
     def store_dir
       'attachs'
     end
-
-    def content_disposition
-      "attachment;filename=#{file.original_filename}"
-    end
   end
 
   class Photo < ActiveRecord::Base
@@ -68,10 +64,12 @@ describe 'Upload' do
         @file1 = load_file('foo.gif')
         @photo = Photo.new(image: @file)
         @photo1 = Photo.new(image: @file1)
+        @photo.save
+        @photo1.save
       end
 
       it 'should upload file' do
-        expect(@photo.save).to eq true
+        expect(@photo.persisted?).to eq true
         expect(@photo[:image].present?).to eq true
         # FIXME: image? 需要实现
         # expect(@photo.image?).to eq true
@@ -82,7 +80,7 @@ describe 'Upload' do
         expect(img.size).to eq @file.size
         expect(img.content_type).to eq 'image/jpeg'
 
-        expect(@photo1.save).to eq true
+        expect(@photo1.persisted?).to eq true
         img1 = open(@photo1.image.url)
         expect(img1.size).to eq @file1.size
         expect(img1.content_type).to eq 'image/gif'
@@ -95,10 +93,10 @@ describe 'Upload' do
 
       it 'should get Aliyun OSS thumb url with :thumb option' do
         url = @photo.image.url(thumb: '?x-oss-process=image/resize,w_100')
-        expect(url).to include('https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com')
+        expect(url).to include(ALIYUN_HOST)
         expect(url).to include('?x-oss-process=image/resize,w_100')
         url1 = @photo.image.url(thumb: '?x-oss-process=image/resize,w_60')
-        expect(url1).to include('https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com')
+        expect(url1).to include(ALIYUN_HOST)
         expect(url1).to include('?x-oss-process=image/resize,w_60')
         img1 = open(url)
         expect(img1.size).not_to eq 0
@@ -110,10 +108,11 @@ describe 'Upload' do
       before(:all) do
         @file = load_file('foo.zip')
         @attachment = Attachment.new(file: @file)
+        @attachment.save
       end
 
       it 'should upload file' do
-        expect(@attachment.save).to eq true
+        expect(@attachment.persisted?).to eq true
       end
 
       it 'should get uploaded file' do
