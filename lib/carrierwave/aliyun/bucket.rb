@@ -23,22 +23,13 @@ module CarrierWave
       # params:
       # - path - remote 存储路径
       # - file - 需要上传文件的 File 对象
-      # - opts:
-      #   - content_type - 上传文件的 MimeType，默认 `image/jpg`
-      #   - content_disposition - Content-Disposition
+      # - headers - File 对象的 headers
       # returns:
       # 图片的下载地址
-      def put(path, file, opts = {})
+      def put(path, file, headers = {})
         path.sub!(PATH_PREFIX, '')
+        res = oss_upload_client.bucket_create_object(path, file, format_headers(headers))
 
-        headers = {}
-        headers['Content-Type'] = opts[:content_type] || 'image/jpg'
-        content_disposition = opts[:content_disposition]
-        if content_disposition
-          headers['Content-Disposition'] = content_disposition
-        end
-
-        res = oss_upload_client.bucket_create_object(path, file, headers)
         if res.success?
           path_to_url(path)
         else
@@ -142,6 +133,16 @@ module CarrierWave
         }
 
         @oss_upload_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+      end
+
+      # { content_type: 'application/xml', 'accept-encoding': 'gzip' }
+      # to:
+      # { 'Content-Type': 'application/xml', 'Accept-Encoding': 'gzip' }
+      def format_headers(headers = {})
+        headers.reduce({}) do |memo, (k,v)|
+          memo[k.to_s.split(/_|-/).map(&:capitalize).join('-')] = v
+          memo
+        end
       end
     end
   end

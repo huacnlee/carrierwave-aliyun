@@ -11,6 +11,7 @@ module CarrierWave
         add_config :aliyun_internal
         add_config :aliyun_host
         add_config :aliyun_private_read
+        add_config :custom_headers
 
         configure do |config|
           config.storage_engines[:aliyun] = 'CarrierWave::Storage::Aliyun'
