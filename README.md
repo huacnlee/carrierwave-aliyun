@@ -66,3 +66,21 @@ class AttachmentUploader < CarrierWave::Uploader::Base
 end
 
 ```
+
+## 通过 CDN 获取文件
+
+当需要大量分发文件时( 活动海报, apk ), CDN 的流量费用大概只有 OSS 的一半. 客户端访问 CDN, CDN 回源 OSS 的方式, 可以节省不少成本.
+
+在 `config/initializers/carrierwave.rb` 增加配置:
+
+```
+CarrierWave.configure do |config|
+  config.cdn_host = 'http://cdn-host.com'
+end
+```
+
+这样之后, 就可以做到:
+
+- 上传文件不受影响
+- 获取文件时, `Apk.first.file_url` 就会拿到 CDN 地址
+- 某些场景( 例如缩略图 ), 需要从 OSS 获取文件, `Apk.first.file_url(cdn: false, thumb: '?x-oss-process=image/resize,h_100')` 即可
