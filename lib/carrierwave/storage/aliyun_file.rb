@@ -10,7 +10,7 @@ module CarrierWave
       end
 
       def read
-        object = bucket.get(@path)
+        object   = bucket.get(@path)
         @headers = object.headers
         object
       end
@@ -30,7 +30,9 @@ module CarrierWave
       #    :thumb - Aliyun OSS Image Processor option, etc: @100w_200h_95q
       #
       def url(opts = {})
-        if @uploader.aliyun_private_read
+        if opts[:cdn] != false && @uploader.cdn_host
+          [@uploader.cdn_host, path].join('/')
+        elsif @uploader.aliyun_private_read
           bucket.private_get_url(@path, opts)
         else
           bucket.path_to_url(@path, opts)
