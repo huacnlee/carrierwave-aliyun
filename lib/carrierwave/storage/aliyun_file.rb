@@ -9,10 +9,16 @@ module CarrierWave
         @base     = base
       end
 
+      def response
+        @response ||= bucket.get(@path)
+      end
+
+      def headers
+        @headers ||= response&.[](0)&.deep_transform_keys! { |key| key.underscore.to_sym }
+      end
+
       def read
-        object = bucket.get(@path)
-        @headers = object.headers
-        object
+        @data ||= response&.[](1)
       end
 
       def delete
@@ -50,10 +56,6 @@ module CarrierWave
       end
 
       private
-
-      def headers
-        @headers ||= {}
-      end
 
       def bucket
         return @bucket if defined? @bucket
