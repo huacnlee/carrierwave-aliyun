@@ -55,7 +55,7 @@ module CarrierWave
         path.sub!(PATH_PREFIX, '')
         res = oss_upload_client.bucket_get_object(path)
         if res.success?
-          return res.parsed_response
+          return [res.headers, res.parsed_response]
         else
           raise 'Get content faild'
         end

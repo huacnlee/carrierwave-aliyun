@@ -10,9 +10,8 @@ module CarrierWave
       end
 
       def read
-        object = bucket.get(@path)
-        @headers = object.headers
-        object
+        @headers, data = bucket.get(@path)
+        data
       end
 
       def delete
