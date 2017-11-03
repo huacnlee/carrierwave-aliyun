@@ -51,6 +51,9 @@ module CarrierWave
       private
 
       def headers
+        return @headers if @headers
+
+        @headers, = bucket.get(@path)
         @headers ||= {}
       end
 
