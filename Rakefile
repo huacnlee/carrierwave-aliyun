@@ -5,3 +5,4 @@ rescue LoadError
 end
 
 Bundler::GemHelper.install_tasks
+require 'bundler/gem_tasks'
