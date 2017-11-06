@@ -10,9 +10,9 @@ module CarrierWave
       end
 
       def read
-        object = bucket.get(@path)
-        @headers = object.headers
-        object
+        res = bucket.get(@path)
+        @headers = res.headers.deep_transform_keys { |k| k.underscore.to_sym rescue key }
+        res.body
       end
 
       def delete
@@ -38,7 +38,7 @@ module CarrierWave
       end
 
       def content_type
-        headers[:content_type]
+        headers[:content_type].first
       end
 
       def content_type=(new_content_type)
@@ -49,11 +49,11 @@ module CarrierWave
         bucket.put(@path, file, headers)
       end
 
-      private
-
       def headers
         @headers ||= {}
       end
+
+      private
 
       def bucket
         return @bucket if defined? @bucket

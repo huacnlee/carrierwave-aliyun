@@ -79,5 +79,18 @@ describe 'Aliyun' do
       expect(f).to respond_to(:identifier)
       expect(f).to respond_to(:filename)
     end
+
+    it 'read work' do
+      image_url = @bucket.put('/a/a.jpg', load_file('foo.jpg'))
+      res = Net::HTTP.get_response(URI.parse(image_url))
+
+      @uploader.aliyun_private_read = false
+      f = CarrierWave::Storage::AliyunFile.new(@uploader, '', '/a/a.jpg')
+      body = f.read
+      expect(body).to eq(res.body)
+      expect(f.url).to eq('http://foo.bar.com/a/a.jpg')
+      expect(f.headers.keys).to include(*%i(content_type server date content_length etag last_modified content_md5))
+      expect(f.content_type).to eq('image/jpg')
+    end
   end
 end
