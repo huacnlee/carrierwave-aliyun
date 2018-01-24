@@ -1,4 +1,5 @@
 module CarrierWave
+
   module Storage
     class AliyunFile < CarrierWave::SanitizedFile
       attr_reader :path
@@ -22,6 +23,18 @@ module CarrierWave
         # If the file's not there, don't panic
         puts "carrierwave-aliyun delete file failed: #{e}"
         nil
+      end
+
+      def empty?
+        @path.nil? || ! self.exists?
+      end
+
+      def exists?
+        res = bucket.get(@path)
+        true
+      rescue => e
+        puts "file is not exist in bucket"
+        false
       end
 
       ##
