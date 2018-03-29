@@ -25,9 +25,24 @@ module CarrierWave
         nil
       end
 
+      def empty?
+        @path.nil? || ! self.exists?
+      end
+
+      def size
+        if is_path?
+          exists? ? File.size(path) : 0
+        elsif @file.respond_to?(:size)
+          @file.size
+        elsif path
+          exists? ? self.headers[:content_length][0].to_i : 0
+        else
+          0
+        end
+      end
+
       def exists?
-        self.path.present? && bucket.get(self.path)
-        true
+        self.path.present? && self.read.present?
       rescue => e
         puts e
         puts "file is not exist in bucket"
