@@ -35,7 +35,7 @@ module CarrierWave
         elsif @file.respond_to?(:size)
           @file.size
         elsif path
-          exists? ? self.headers[:content_length][0].to_i : 0
+          exists? ? self.headers[:content_length][0].to_i||File.size(path) : 0
         else
           0
         end
