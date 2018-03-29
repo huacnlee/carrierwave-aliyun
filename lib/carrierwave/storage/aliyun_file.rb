@@ -25,10 +25,6 @@ module CarrierWave
         nil
       end
 
-      def empty?
-        @file.nil? || self.size.nil? || (self.size.zero? && ! self.exists?)
-      end
-
       def exists?
         self.path.present? && bucket.get(self.path)
         true
