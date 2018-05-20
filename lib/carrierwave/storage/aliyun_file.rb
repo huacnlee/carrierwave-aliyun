@@ -11,9 +11,9 @@ module CarrierWave
       end
 
       def read
-        res = bucket.get(@path)
-        @headers = res.headers.deep_transform_keys { |k| k.underscore.to_sym rescue key }
-        res.body
+        res, body = bucket.get(@path)
+        @headers = res.headers.deep_transform_keys { |k| k.underscore.to_sym rescue k }
+        body
       end
 
       def delete
@@ -35,14 +35,22 @@ module CarrierWave
         elsif @file.respond_to?(:size)
           @file.size
         elsif path
-          exists? ? self.headers[:content_length][0].to_i||File.size(path) : 0
+          exists? ? self.headers[:content_length].to_i||File.size(path) : 0
         else
           0
         end
       end
 
+      def get_meta
+        res = bucket.get_meta(@path)
+        if res
+          @headers = res.headers.deep_transform_keys { |k| k.underscore.to_sym rescue k }
+        end
+        !!res
+      end
+
       def exists?
-        self.path.present? && self.read.present?
+        self.path.present? && self.get_meta
       rescue => e
         puts e
         puts "file is not exist in bucket"

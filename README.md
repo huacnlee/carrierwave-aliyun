@@ -1,5 +1,7 @@
 # CarrierWave for Aliyun OSS
 
+因原 aliyun-oss-sdk不再维护，且与官方aliyun-sdk存在命名空间冲突，故重构carrierwave-aliyun
+
 This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](https://github.com/jnicklas/carrierwave/)
 
 [![Gem Version](https://badge.fury.io/rb/carrierwave-aliyun.svg)](https://rubygems.org/gems/carrierwave-aliyun) [![Build Status](https://travis-ci.org/huacnlee/carrierwave-aliyun.svg?branch=master)](https://travis-ci.org/huacnlee/carrierwave-aliyun) [![Code Climate](https://codeclimate.com/github/huacnlee/carrierwave-aliyun/badges/gpa.svg)](https://codeclimate.com/github/huacnlee/carrierwave-aliyun)

@@ -38,11 +38,14 @@ module CarrierWave
           headers['Content-Disposition'] = content_disposition
         end
 
-        res = oss_upload_client.bucket_create_object(path, file, headers)
-        if res.success?
+        begin
+          oss_upload_client.put_object(path, headers) do |sw|
+            sw << file.read(16 * 1024) until file.eof?
+          end
           path_to_url(path)
-        else
-          raise 'Put file failed'
+        rescue => e 
+          Rails.logger.error "put failed"
+          raise e
         end
       end
 
@@ -53,12 +56,29 @@ module CarrierWave
       # file data
       def get(path)
         path.sub!(PATH_PREFIX, '')
-        res = oss_upload_client.bucket_get_object(path)
-        if res.success?
-          return res
-        else
-          raise 'Get content faild'
+        begin 
+          data = nil
+          res = oss_upload_client.get_object(path) do |content|
+            data = content
+          end
+          [res, data]
+        rescue => e
+          Rails.logger.error "get failed"
+          raise e
         end
+      end
+
+      def get_meta(path)
+        path.sub!(PATH_PREFIX, '')
+        begin 
+          oss_upload_client.get_object(path)
+        rescue => e
+          nil
+        end
+      end
+
+      def exists?(path)
+        oss_upload_client.object_exists?(path)
       end
 
       # 删除 Remote 的文件
@@ -70,11 +90,12 @@ module CarrierWave
       # 图片的下载地址
       def delete(path)
         path.sub!(PATH_PREFIX, '')
-        res = oss_upload_client.bucket_delete_object(path)
-        if res.success?
-          return path_to_url(path)
-        else
-          raise 'Delete failed'
+        begin
+          res = oss_upload_client.delete_object(path)
+          path_to_url(path)
+        rescue => e
+          Rails.logger.error "delete failed"
+          raise e
         end
       end
 
@@ -96,52 +117,55 @@ module CarrierWave
         url = ''
         if opts[:thumb]
           thumb_path = [path, opts[:thumb]].join('')
-          url = img_client.bucket_get_object_share_link(thumb_path, 3600)
+          url = img_client.object_url(thumb_path, expiry: 3600)
         else
-          url = oss_client.bucket_get_object_share_link(path, 3600)
+          url = oss_client.object_url(path, expiry: 3600)
         end
         url.gsub('http://', 'https://')
       end
 
       def head(path)
-        oss_client.bucket_get_meta_object(path)
+        obj = img_client.get_object_meta(path)
+        # obj.metas
       end
 
       private
 
       def oss_client
         return @oss_client if defined?(@oss_client)
-        opts = {
-          host: "oss-#{@aliyun_area}.aliyuncs.com",
-          bucket: @aliyun_bucket
-        }
-        @oss_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        endpoint = "https://oss-#{@aliyun_area}.aliyuncs.com.aliyuncs.com"
+        client = ::Aliyun::OSS::Client.new(
+          :endpoint => endpoint, 
+          :access_key_id => @aliyun_access_id, 
+          :access_key_secret => @aliyun_access_key)
+
+        @oss_client = client.get_bucket(@aliyun_bucket)
       end
 
       def img_client
         return @img_client if defined?(@img_client)
-        opts = {
-          host: "img-#{@aliyun_area}.aliyuncs.com",
-          bucket: @aliyun_bucket
-        }
-        @img_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        endpoint = "https://img-#{@aliyun_area}.aliyuncs.com"
+        client = ::Aliyun::OSS::Client.new(
+          :endpoint => endpoint, 
+          :access_key_id => @aliyun_access_id, 
+          :access_key_secret => @aliyun_access_key)
+
+        @img_client = client.get_bucket(@aliyun_bucket)
       end
 
       def oss_upload_client
         return @oss_upload_client if defined?(@oss_upload_client)
 
-        host = if @aliyun_internal
-                 "oss-#{@aliyun_area}-internal.aliyuncs.com"
+        endpoint = if @aliyun_internal
+                 "https://oss-#{@aliyun_area}-internal.aliyuncs.com"
                else
-                 "oss-#{@aliyun_area}.aliyuncs.com"
+                 "https://oss-#{@aliyun_area}.aliyuncs.com"
                end
-
-        opts = {
-          host: host,
-          bucket: @aliyun_bucket
-        }
-
-        @oss_upload_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        client = ::Aliyun::OSS::Client.new(
+          :endpoint => endpoint, 
+          :access_key_id => @aliyun_access_id, 
+          :access_key_secret => @aliyun_access_key)
+        @oss_upload_client = client.get_bucket(@aliyun_bucket)
       end
     end
   end
