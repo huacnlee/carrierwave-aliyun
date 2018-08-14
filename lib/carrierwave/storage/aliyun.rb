@@ -12,7 +12,7 @@ module CarrierWave
           content_disposition: uploader.try(:content_disposition)
         }
 
-        f.store(::File.open(file.file), headers)
+        f.store(file.file, headers)
         f
       end
 
