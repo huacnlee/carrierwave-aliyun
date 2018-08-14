@@ -27,14 +27,14 @@ ActiveRecord::Base.establish_connection(adapter: 'sqlite3',
 ALIYUN_ACCESS_ID = ENV['ALIYUN_ACCESS_ID'] || ''
 ALIYUN_ACCESS_KEY = ENV['ALIYUN_ACCESS_KEY'] || ''
 ALIYUN_BUCKET = ENV['ALIYUN_BUCKET'] || 'carrierwave-aliyun-test'
-ALIYUN_AREA = ENV['ALIYUN_AREA'] || 'cn-beijing'
+ALIYUN_REGION = ENV['ALIYUN_REGION'] || 'cn-beijing'
 
 CarrierWave.configure do |config|
   config.storage = :aliyun
   config.aliyun_access_id = ALIYUN_ACCESS_ID
   config.aliyun_access_key = ALIYUN_ACCESS_KEY
   config.aliyun_bucket = ALIYUN_BUCKET
-  config.aliyun_area = ALIYUN_AREA
+  config.aliyun_region = ALIYUN_REGION
   config.aliyun_internal = false
 end
 

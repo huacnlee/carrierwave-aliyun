@@ -6,17 +6,11 @@ module CarrierWave
       def initialize(uploader)
         @aliyun_access_id    = uploader.aliyun_access_id
         @aliyun_access_key   = uploader.aliyun_access_key
+        @aliyun_endpoint     = uploader.aliyun_endpoint
         @aliyun_bucket       = uploader.aliyun_bucket
-        @aliyun_area         = uploader.aliyun_area || 'cn-hangzhou'
+        @aliyun_region         = uploader.aliyun_region || 'cn-hangzhou'
         @aliyun_private_read = uploader.aliyun_private_read
         @aliyun_internal     = uploader.aliyun_internal
-
-        # Host for get request
-        @aliyun_host = uploader.aliyun_host || "https://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
-
-        unless @aliyun_host.include?('//')
-          raise "config.aliyun_host requirement include // http:// or https://, but you give: #{@aliyun_host}"
-        end
       end
 
       # 上传文件
@@ -112,36 +106,42 @@ module CarrierWave
       def oss_client
         return @oss_client if defined?(@oss_client)
         opts = {
-          host: "oss-#{@aliyun_area}.aliyuncs.com",
+          access_key_id: @aliyun_access_id,
+          access_key_secret: @aliyun_access_key,
+          endpoint: @aliyun_endpoint,
           bucket: @aliyun_bucket
         }
-        @oss_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        @oss_client = ::Aliyun::OSS::Client.new(opts)
       end
 
       def img_client
         return @img_client if defined?(@img_client)
         opts = {
-          host: "img-#{@aliyun_area}.aliyuncs.com",
+          access_key_id: @aliyun_access_id,
+          access_key_secret: @aliyun_access_key,
+          endpoint: "img-#{@aliyun_region}.aliyuncs.com",
           bucket: @aliyun_bucket
         }
-        @img_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        @img_client = ::Aliyun::OSS::Client.new(opts)
       end
 
       def oss_upload_client
         return @oss_upload_client if defined?(@oss_upload_client)
 
-        host = if @aliyun_internal
-                 "oss-#{@aliyun_area}-internal.aliyuncs.com"
+        endpoint = if @aliyun_internal
+                 "oss-#{@aliyun_region}-internal.aliyuncs.com"
                else
-                 "oss-#{@aliyun_area}.aliyuncs.com"
+                 "oss-#{@aliyun_region}.aliyuncs.com"
                end
 
         opts = {
-          host: host,
+          access_key_id: @aliyun_access_id,
+          access_key_secret: @aliyun_access_key,
+          endpoint: endpoint,
           bucket: @aliyun_bucket
         }
 
-        @oss_upload_client = ::Aliyun::Oss::Client.new(@aliyun_access_id, @aliyun_access_key, opts)
+        @oss_upload_client = ::Aliyun::OSS::Client.new(opts)
       end
     end
   end

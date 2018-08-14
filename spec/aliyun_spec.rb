@@ -6,9 +6,9 @@ describe 'Aliyun' do
       aliyun_access_id: ALIYUN_ACCESS_ID,
       aliyun_access_key: ALIYUN_ACCESS_KEY,
       aliyun_bucket: ALIYUN_BUCKET,
-      aliyun_area: ALIYUN_AREA,
+      aliyun_REGION: ALIYUN_REGION,
       aliyun_internal: false,
-      aliyun_host: 'https://test.cn-hangzhou.oss.aliyun-inc.com'
+      aliyun_endpoint: 'https://test.cn-hangzhou.oss.aliyun-inc.com'
     }
 
     @uploader = CarrierWave::Uploader::Base.new
@@ -44,11 +44,11 @@ describe 'Aliyun' do
   end
 
   it 'should support custom domain' do
-    @uploader.aliyun_host = 'https://foo.bar.com'
+    @uploader.aliyun_endpoint = 'https://foo.bar.com'
     @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
     url = @bucket.put('a/a.jpg', load_file('foo.jpg'))
     expect(url).to eq 'https://foo.bar.com/a/a.jpg'
-    @uploader.aliyun_host = 'http://foo.bar.com'
+    @uploader.aliyun_endpoint = 'http://foo.bar.com'
     @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
     url = @bucket.put('a/a.jpg', load_file('foo.jpg'))
     expect(url).to eq 'http://foo.bar.com/a/a.jpg'
