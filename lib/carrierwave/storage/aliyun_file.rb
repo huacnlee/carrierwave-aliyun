@@ -9,12 +9,6 @@ module CarrierWave
         @base     = base
       end
 
-      def read
-        res = bucket.get(@path)
-        @headers = res.headers.deep_transform_keys { |k| k.underscore.to_sym rescue key }
-        res.body
-      end
-
       def delete
         bucket.delete(@path)
         true
@@ -24,17 +18,8 @@ module CarrierWave
         nil
       end
 
-      ##
-      # Generate file url
-      # params
-      #    :thumb - Aliyun OSS Image Processor option, etc: @100w_200h_95q
-      #
       def url(opts = {})
-        if @uploader.aliyun_private_read
-          bucket.private_get_url(@path, opts)
-        else
-          bucket.path_to_url(@path, opts)
-        end
+        bucket.path_to_url(@path, opts)
       end
 
       def content_type

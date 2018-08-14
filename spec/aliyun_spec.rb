@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe 'Aliyun' do
   before(:all) do
     @opts = {
-      aliyun_access_id: ALIYUN_ACCESS_ID,
-      aliyun_access_key: ALIYUN_ACCESS_KEY,
+      aliyun_access_id: ALIYUN_ACCESS_KEY_ID,
+      aliyun_access_key: ALIYUN_ACCESS_KEY_SECRET,
       aliyun_bucket: ALIYUN_BUCKET,
       aliyun_REGION: ALIYUN_REGION,
       aliyun_internal: false,
