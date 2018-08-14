@@ -38,14 +38,15 @@ module CarrierWave
         end
       end
 
-      # 读取文件
+      # 下载文件
       # params:
       # - path - remote 存储路径
       # returns:
       # file data
-      def get(path)
+      def get(path, file, opts = {})
+        opts[:file] = file
         path.sub!(PATH_PREFIX, '')
-        res = bucket.get_object(path)
+        res = bucket.get_object(path, opts)
         if res.success?
           return res
         else
