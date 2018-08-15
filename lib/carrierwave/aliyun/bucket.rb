@@ -31,7 +31,7 @@ module CarrierWave
         end
 
         res = bucket.put_object(path, headers)
-        if res.success?
+        if res
           path_to_url(path)
         else
           raise 'Put file failed'
@@ -47,7 +47,7 @@ module CarrierWave
         opts[:file] = file
         path.sub!(PATH_PREFIX, '')
         res = bucket.get_object(path, opts)
-        if res.success?
+        if res
           return res
         else
           raise 'Get content faild'
@@ -64,7 +64,7 @@ module CarrierWave
       def delete(path)
         path.sub!(PATH_PREFIX, '')
         res = bucket.delete_object(path)
-        if res.success?
+        if res
           return path_to_url(path)
         else
           raise 'Delete failed'
@@ -85,15 +85,11 @@ module CarrierWave
       private
 
       def oss_client
-        return @oss_client if @oss_client
-
-        opts = {
-          access_key_id: @aliyun_access_key_id,
-          access_key_secret: @aliyun_access_key,
+        @oss_client ||= ::Aliyun::OSS::Client.new(
           endpoint: @aliyun_endpoint,
-        }
-
-        @oss_client = ::Aliyun::OSS::Client.new(opts)
+          access_key_id: @aliyun_access_key_id,
+          access_key_secret: @aliyun_access_key_secret,
+        )
       end
 
       def bucket

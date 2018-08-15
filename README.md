@@ -2,7 +2,6 @@
 
 This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](https://github.com/jnicklas/carrierwave/)
 
-[![Gem Version](https://badge.fury.io/rb/carrierwave-aliyun.svg)](https://rubygems.org/gems/carrierwave-aliyun) [![Build Status](https://travis-ci.org/huacnlee/carrierwave-aliyun.svg?branch=master)](https://travis-ci.org/huacnlee/carrierwave-aliyun) [![Code Climate](https://codeclimate.com/github/huacnlee/carrierwave-aliyun/badges/gpa.svg)](https://codeclimate.com/github/huacnlee/carrierwave-aliyun)
 
 > NOTE: 此 Gem 是一个 CarrierWave 的组件，你需要配合 CarrierWave 一起使用，如果你需要直接用 Aliyun OSS，可以尝试用 [aliyun-oss-ruby-sdk](https://github.com/aliyun-beta/aliyun-oss-ruby-sdk) 这个 Gem。
 
@@ -14,14 +13,13 @@ gem 'carrierwave-aliyun'
 
 ## Configuration
 
-创建这么个脚本 `config/initializers/carrierwave.rb` 填入下面的代码，并修改对应的配置：
+创建脚本 `config/initializers/carrierwave.rb` 填入下面的代码，并修改对应的配置：
 
 ```ruby
 CarrierWave.configure do |config|
   config.storage           = :aliyun
   config.aliyun_access_key_id  = "xxxxxx"
   config.aliyun_access_key_secret = 'xxxxxx'
-  # 你需要在 Aliyum OSS 上面提前创建一个 Bucket
   config.aliyun_bucket     = "simple"
   # 配置存储的地区数据中心
   config.aliyun_region     = "cn-hangzhou"
@@ -31,7 +29,6 @@ end
 
 ## 阿里云 OSS 图片缩略图
 
-> NOTE: 此方法同样支持 Private 的 Bucket 哦！
 
 关于阿里云 OSS 图片缩略图的详细文档，请仔细阅读: [Aliyun OSS 接入图片服务](https://help.aliyun.com/document_detail/44688.html)
 

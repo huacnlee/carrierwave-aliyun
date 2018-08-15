@@ -41,9 +41,7 @@ module CarrierWave
       private
 
       def bucket
-        return @bucket if defined? @bucket
-
-        @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
+        @bucket ||= CarrierWave::Aliyun::Bucket.new(@uploader)
       end
     end
   end
