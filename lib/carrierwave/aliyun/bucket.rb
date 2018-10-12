@@ -39,7 +39,7 @@ module CarrierWave
           headers['Content-Disposition'] = content_disposition
         end
 
-        res = oss_upload_client.bucket_create_object(path, file, headers)
+        res = client_bucket.put_object(path, file, headers)
         if res.success?
           path_to_url(path)
         else
@@ -52,9 +52,10 @@ module CarrierWave
       # - path - remote 存储路径
       # returns:
       # file data
+      # TODO
       def get(path)
         path.sub!(PATH_PREFIX, '')
-        res = oss_upload_client.bucket_get_object(path)
+        res = client_bucket.get_object(path)
         if res.success?
           return res
         else
@@ -71,7 +72,7 @@ module CarrierWave
       # 图片的下载地址
       def delete(path)
         path.sub!(PATH_PREFIX, '')
-        res = oss_upload_client.bucket_delete_object(path)
+        res = client_bucket.delete_object(path)
         if res.success?
           return path_to_url(path)
         else
@@ -105,7 +106,7 @@ module CarrierWave
       end
 
       def head(path)
-        oss_client.bucket_get_meta_object(path)
+        client_bucket.get_object(path)
       end
 
 
