@@ -10,7 +10,6 @@ module CarrierWave
         @aliyun_area         = uploader.aliyun_area || 'cn-hangzhou'
         @aliyun_private_read = uploader.aliyun_private_read
         @aliyun_internal     = uploader.aliyun_internal
-        @aliyun_arn = uploader.aliyun_arn
 
         # Host for get request
         @aliyun_host = uploader.aliyun_host || "https://#{@aliyun_bucket}.oss-#{@aliyun_area}.aliyuncs.com"
@@ -39,7 +38,9 @@ module CarrierWave
           headers['Content-Disposition'] = content_disposition
         end
 
-        res = client_bucket.put_object(path, file, headers)
+        opts[:file] = file
+
+        res = client_bucket.put_object(path, opts)
         if res.success?
           path_to_url(path)
         else
