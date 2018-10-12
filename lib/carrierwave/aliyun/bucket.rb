@@ -38,10 +38,15 @@ module CarrierWave
           headers['Content-Disposition'] = content_disposition
         end
 
-        opts[:file] = file
+        options = {}
+        options[:file] = file.path
+        options[:content_type] = opts[:content_type] || 'image/jpg'
+        options[:content_disposition] = opts[:content_disposition]
 
-        res = client_bucket.put_object(path, opts)
-        if res.success?
+
+        res = client_bucket.put_object(path, options)
+
+        if res
           path_to_url(path)
         else
           raise 'Put file failed'
@@ -57,7 +62,7 @@ module CarrierWave
       def get(path)
         path.sub!(PATH_PREFIX, '')
         res = client_bucket.get_object(path)
-        if res.success?
+        if res
           return res
         else
           raise 'Get content faild'
@@ -74,7 +79,7 @@ module CarrierWave
       def delete(path)
         path.sub!(PATH_PREFIX, '')
         res = client_bucket.delete_object(path)
-        if res.success?
+        if res
           return path_to_url(path)
         else
           raise 'Delete failed'
