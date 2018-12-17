@@ -81,7 +81,7 @@ module CarrierWave
       ##
       # 根据配置返回完整的上传文件的访问地址
       def path_to_url(path, opts = {})
-        if opts[:thumb]
+        if opts.respond_to?(:[]) && opts[:thumb]
           thumb_path = [path, opts[:thumb]].join('')
           [@aliyun_host, thumb_path].join('/')
         else
@@ -94,7 +94,7 @@ module CarrierWave
       def private_get_url(path, opts = {})
         path.sub!(PATH_PREFIX, '')
         url = ''
-        if opts[:thumb]
+        if opts.respond_to?(:[]) && opts[:thumb]
           thumb_path = [path, opts[:thumb]].join('')
           url = img_client.bucket_get_object_share_link(thumb_path, 3600)
         else
