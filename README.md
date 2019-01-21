@@ -66,3 +66,70 @@ class AttachmentUploader < CarrierWave::Uploader::Base
 end
 
 ```
+
+# CarrierWave for Aliyun OSS (English Documentation)
+
+This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](https://github.com/jnicklas/carrierwave/)
+
+> NOTE: This Gem is a Component of CarrierWave. You need to use it together with CarrierWave. If you need to use Aliyun OSS directly, you should use [aliyun-oss-ruby-sdk](https://github.com/aliyun-beta/aliyun-oss-ruby-sdk) gem instead.
+
+## Using Bundler
+
+```ruby
+gem 'carrierwave-aliyun'
+```
+
+## Configuration
+
+Add this to `config/initializers/carrierwave.rb` and modify the credentials with yours：
+
+```ruby
+CarrierWave.configure do |config|
+  config.storage           = :aliyun
+  config.aliyun_access_id  = "xxxxxx"
+  config.aliyun_access_key = 'xxxxxx'
+  # Your bucket Bucket on Aliyum OSS
+  config.aliyun_bucket     = "simple"
+  # If you are using Aliyun host internal LAN - true.
+  config.aliyun_internal   = true
+  # Configure the store data center, default: cn-hangzhou
+  # config.aliyun_area     = "cn-hangzhou"
+  # If you configure this attribute, the URL returned by carrierwave will use the custom domain name you have in aliyun OSS
+  # Custom domain name please CNAME to your_bucket_name.oss-cn-hangzhou.aliyuncs.com (your_bucket_name is the name of your bucket)
+  config.aliyun_host       = "https://foo.bar.com"
+  # Bucket Set true for private reads, default false, so that the resulting URL is a logical access to private space
+  # config.aliyun_private_read = false
+end
+```
+
+## Alibaba Cloud OSS Image Thumbnail
+
+> NOTE: This method also supports Private Buckets!
+
+For detailed documentation on Alibaba Cloud OSS image thumbnails, please read: [Aliyun OSS Access Picture Service](https://help.aliyun.com/document_detail/44688.html)
+
+```rb
+irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100')
+"https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100"
+irb> User.last.avatar.url(thumb: '?x-oss-process=image/resize,h_100,w_100')
+"https://simple.oss-cn-hangzhou.aliyuncs.com/users/avatar/12.png?x-oss-process=image/resize,h_100,w_100"
+```
+
+## Add to file settings Content-Disposition
+
+In the file upload scene (non-picture), you may need to set the Content-Disposition for the uploaded file so that when the user directly accesses the URL, it can be downloaded and saved with the file name or original file name you desire.
+
+At this point you need to implement the `content_disposition` function for the Uploader, for example:
+
+```rb
+# app/uploaders/attachment_uploader.rb
+class AttachmentUploader < CarrierWave::Uploader::Base
+  def content_disposition
+    # Non-image files should have a custom content_disposition
+    unless file.extension.downcase.in?(%w(jpg jpeg gif png svg))
+      "attachment;filename=#{file.original_filename}"
+    end
+  end
+end
+
+```
