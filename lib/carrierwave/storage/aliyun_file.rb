@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CarrierWave
   module Storage
     class AliyunFile < CarrierWave::SanitizedFile
@@ -55,11 +57,11 @@ module CarrierWave
 
       private
 
-      def bucket
-        return @bucket if defined? @bucket
+        def bucket
+          return @bucket if defined? @bucket
 
-        @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
-      end
+          @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
+        end
     end
   end
 end

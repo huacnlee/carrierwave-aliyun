@@ -1,6 +1,8 @@
-require File.dirname(__FILE__) + '/spec_helper'
+# frozen_string_literal: true
 
-describe 'Upload' do
+require File.dirname(__FILE__) + "/spec_helper"
+
+describe "Upload" do
   def setup_db
     ActiveRecord::Schema.define(version: 1) do
       create_table :photos do |t|
@@ -29,7 +31,7 @@ describe 'Upload' do
     end
 
     def store_dir
-      'photos'
+      "photos"
     end
   end
 
@@ -37,7 +39,7 @@ describe 'Upload' do
     include CarrierWave::MiniMagick
 
     def store_dir
-      'attachs'
+      "attachs"
     end
 
     def content_disposition
@@ -61,66 +63,66 @@ describe 'Upload' do
     drop_db
   end
 
-  describe 'Upload Image' do
-    context 'should upload image' do
+  describe "Upload Image" do
+    context "should upload image" do
       before(:all) do
-        @file = load_file('foo.jpg')
-        @file1 = load_file('foo.gif')
+        @file = load_file("foo.jpg")
+        @file1 = load_file("foo.gif")
         @photo = Photo.new(image: @file)
         @photo1 = Photo.new(image: @file1)
       end
 
-      it 'should upload file' do
+      it "should upload file" do
         expect(@photo.save).to eq true
         expect(@photo[:image].present?).to eq true
         # FIXME: image? 需要实现
         # expect(@photo.image?).to eq true
       end
 
-      it 'should get uploaded file' do
+      it "should get uploaded file" do
         img = open(@photo.image.url)
         expect(img.size).to eq @file.size
-        expect(img.content_type).to eq 'image/jpeg'
+        expect(img.content_type).to eq "image/jpeg"
 
         expect(@photo1.save).to eq true
         img1 = open(@photo1.image.url)
         expect(img1.size).to eq @file1.size
-        expect(img1.content_type).to eq 'image/gif'
+        expect(img1.content_type).to eq "image/gif"
       end
 
-      it 'sholud get small version uploaded file' do
+      it "sholud get small version uploaded file" do
         expect(open(@photo.image.small.url)).not_to eq nil
         expect(open(@photo1.image.small.url)).not_to eq nil
       end
 
-      it 'should get Aliyun OSS thumb url with :thumb option' do
-        url = @photo.image.url(thumb: '?x-oss-process=image/resize,w_100')
-        expect(url).to include('https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com')
-        expect(url).to include('?x-oss-process=image/resize,w_100')
-        url1 = @photo.image.url(thumb: '?x-oss-process=image/resize,w_60')
-        expect(url1).to include('https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com')
-        expect(url1).to include('?x-oss-process=image/resize,w_60')
+      it "should get Aliyun OSS thumb url with :thumb option" do
+        url = @photo.image.url(thumb: "?x-oss-process=image/resize,w_100")
+        expect(url).to include("https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com")
+        expect(url).to include("?x-oss-process=image/resize,w_100")
+        url1 = @photo.image.url(thumb: "?x-oss-process=image/resize,w_60")
+        expect(url1).to include("https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com")
+        expect(url1).to include("?x-oss-process=image/resize,w_60")
         img1 = open(url)
         expect(img1.size).not_to eq 0
-        expect(img1.content_type).to eq 'image/jpeg'
+        expect(img1.content_type).to eq "image/jpeg"
       end
     end
 
-    context 'should update zip' do
+    context "should update zip" do
       before(:all) do
-        @file = load_file('foo.zip')
+        @file = load_file("foo.zip")
         @attachment = Attachment.new(file: @file)
       end
 
-      it 'should upload file' do
+      it "should upload file" do
         expect(@attachment.save).to eq true
       end
 
-      it 'should get uploaded file' do
+      it "should get uploaded file" do
         attach = open(@attachment.file.url)
         expect(attach.size).to eq @file.size
-        expect(attach.content_type).to eq 'application/zip'
-        expect(attach.meta['content-disposition']).to eq 'attachment;filename=foo.zip'
+        expect(attach.content_type).to eq "application/zip"
+        expect(attach.meta["content-disposition"]).to eq "attachment;filename=foo.zip"
       end
 
       # it 'should delete old file when upload a new file again' do
