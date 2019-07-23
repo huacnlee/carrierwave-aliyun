@@ -4,9 +4,9 @@ This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](h
 
 [![Gem Version](https://badge.fury.io/rb/carrierwave-aliyun.svg)](https://rubygems.org/gems/carrierwave-aliyun) [![Build Status](https://travis-ci.org/huacnlee/carrierwave-aliyun.svg?branch=master)](https://travis-ci.org/huacnlee/carrierwave-aliyun) [![Code Climate](https://codeclimate.com/github/huacnlee/carrierwave-aliyun/badges/gpa.svg)](https://codeclimate.com/github/huacnlee/carrierwave-aliyun)
 
-> NOTE: 此 Gem 是一个 CarrierWave 的组件，你需要配合 CarrierWave 一起使用，如果你需要直接用 Aliyun OSS，可以尝试用 [aliyun-oss-ruby-sdk](https://github.com/aliyun-beta/aliyun-oss-ruby-sdk) 这个 Gem。
+> NOTE: 此 Gem 是一个 CarrierWave 的组件，你需要配合 CarrierWave 一起使用，如果你需要直接用 Aliyun OSS，可以尝试用 [aliyun-sdk](https://github.com/aliyun/aliyun-oss-ruby-sdk) 这个 Gem。
 
-> NOTE: This gem is a extends for [CarrierWave](https://github.com/jnicklas/carrierwave/) for allow it support use Alicloud OSS as storage backend, if you wants use Alicloud OSS directly, please visit [aliyun-oss-ruby-sdk](https://github.com/aliyun-beta/aliyun-oss-ruby-sdk).
+> NOTE: This gem is a extends for [CarrierWave](https://github.com/jnicklas/carrierwave/) for allow it support use Alicloud OSS as storage backend, if you wants use Alicloud OSS directly, please visit [aliyun-sdk](https://github.com/aliyun/aliyun-oss-ruby-sdk).
 
 ## Using Bundler
 
