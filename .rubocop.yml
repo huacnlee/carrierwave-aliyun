@@ -1,53 +1,142 @@
-Style/Documentation:
-  Enabled: false
+AllCops:
+  DisabledByDefault: true
+  TargetRubyVersion: 2.5
+  Exclude:
+    - 'vendor/**/*'
+    - 'lib/generators/settings/templates/*'
 
-Style/AsciiComments:
-  Enabled: false
+# Prefer &&/|| over and/or.
+Style/AndOr:
+  Enabled: true
 
-Style/IfUnlessModifier:
-  Enabled: false
+# Do not use braces for hash literals when they are the last argument of a
+# method call.
+Style/BracesAroundHashParameters:
+  Enabled: true
+  EnforcedStyle: context_dependent
 
-Style/RedundantSelf:
-  Enabled: false
+# Align `when` with `case`.
+Layout/CaseIndentation:
+  Enabled: true
 
-Style/RaiseArgs:
-  EnforcedStyle: compact
+# Align comments with method definitions.
+Layout/CommentIndentation:
+  Enabled: true
 
-Style/MutableConstant:
-  Enabled: false
+Layout/ElseAlignment:
+  Enabled: true
 
-Metrics/LineLength:
-  Max: 1200
+Layout/EmptyLineAfterMagicComment:
+  Enabled: true
 
-Metrics/ClassLength:
-  Max: 1200
+# In a regular class definition, no empty lines around the body.
+Layout/EmptyLinesAroundClassBody:
+  Enabled: true
 
-Metrics/MethodLength:
-  Max: 1200
+# In a regular method definition, no empty lines around the body.
+Layout/EmptyLinesAroundMethodBody:
+  Enabled: true
 
-Metrics/ModuleLength:
-  Max: 1200
+# In a regular module definition, no empty lines around the body.
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: true
 
-Metrics/CyclomaticComplexity:
-  Enabled: false
+Layout/IndentFirstArgument:
+  Enabled: true
 
-Metrics/AbcSize:
-  Enabled: false
+# Use Ruby >= 1.9 syntax for hashes. Prefer { a: :b } over { :a => :b }.
+Style/HashSyntax:
+  Enabled: true
 
-Metrics/PerceivedComplexity:
-  Enabled: false
+# Method definitions after `private` or `protected` isolated calls need one
+# extra level of indentation.
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: indented_internal_methods
 
-Rails/TimeZone:
-  Enabled: false
+# Two spaces, no tabs (for indentation).
+Layout/IndentationWidth:
+  Enabled: true
 
-Style/GlobalVars:
-  Enabled: false
+Layout/LeadingCommentSpace:
+  Enabled: true
 
-Style/GuardClause:
-  Enabled: false
+Layout/SpaceAfterColon:
+  Enabled: true
 
-Rails/FindBy:
-  Enabled: false
+Layout/SpaceAfterComma:
+  Enabled: true
 
-Rails/HasAndBelongsToMany:
-  Enabled: false
+Layout/SpaceAroundEqualsInParameterDefault:
+  Enabled: true
+
+Layout/SpaceAroundKeyword:
+  Enabled: true
+
+Layout/SpaceAroundOperators:
+  Enabled: true
+
+Layout/SpaceBeforeComma:
+    Enabled: true
+
+Layout/SpaceBeforeFirstArg:
+    Enabled: true
+
+Style/DefWithParentheses:
+  Enabled: true
+
+# Defining a method with parameters needs parentheses.
+Style/MethodDefParentheses:
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+# Use `foo {}` not `foo{}`.
+Layout/SpaceBeforeBlockBraces:
+  Enabled: true
+
+# Use `foo { bar }` not `foo {bar}`.
+Layout/SpaceInsideBlockBraces:
+  Enabled: true
+
+# Use `{ a: 1 }` not `{a:1}`.
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: true
+
+Layout/SpaceInsideParens:
+  Enabled: true
+
+# Check quotes usage according to lint rule below.
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+# Detect hard tabs, no hard tabs.
+Layout/Tab:
+  Enabled: true
+
+# Blank lines should not have any spaces.
+Layout/TrailingBlankLines:
+  Enabled: true
+
+# No trailing whitespace.
+Layout/TrailingWhitespace:
+  Enabled: true
+
+# Use quotes for string literals when they are enough.
+Style/UnneededPercentQ:
+  Enabled: true
+
+# Use my_method(my_arg) not my_method( my_arg ) or my_method my_arg.
+Lint/RequireParentheses:
+  Enabled: true
+
+Style/RedundantReturn:
+  Enabled: true
+  AllowMultipleReturnValues: true
+
+Style/Semicolon:
+  Enabled: true
+  AllowAsExpressionSeparator: true

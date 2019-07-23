@@ -1,3 +1,13 @@
+## 1.0.0
+
+- 采用 Aliyun 官方的 SDK 来访问 OSS；
+- DEPRECATION: 配置参数命名规范化，老的配置方式将会在 1.1.0 版本废弃，请注意替换：
+  - `aliyun_access_id` -> `aliyun_access_key_id`
+  - `aliyun_access_key` -> `aliyun_access_key_secret`
+  - `aliyun_area` -> `aliyun_region`
+  - `aliyun_private_read` -> `aliyun_mode = :private`
+- 改进文件上传，支持 `chunk` 模式上传，提升大文件上传的效率以及降低内存开销；
+
 ## 0.9.0
 
 - 修正 `AliyunFile#read` 方法会报错的问题。(#53)

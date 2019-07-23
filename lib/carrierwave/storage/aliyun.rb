@@ -1,6 +1,4 @@
-require 'aliyun/oss'
-require 'carrierwave'
-require 'uri'
+# frozen_string_literal: true
 
 module CarrierWave
   module Storage
