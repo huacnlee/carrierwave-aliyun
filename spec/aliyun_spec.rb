@@ -6,7 +6,7 @@ describe 'Aliyun' do
       aliyun_access_id: ALIYUN_ACCESS_ID,
       aliyun_access_key: ALIYUN_ACCESS_KEY,
       aliyun_bucket: ALIYUN_BUCKET,
-      aliyun_area: ALIYUN_AREA,
+      aliyun_region: ALIYUN_REGION,
       aliyun_internal: false,
       aliyun_host: 'https://test.cn-hangzhou.oss.aliyun-inc.com'
     }

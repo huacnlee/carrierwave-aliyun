@@ -17,10 +17,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'carrierwave', ['>= 0.5.7']
   s.add_dependency 'aliyun-oss-sdk', ['>= 0.1.6']
-
-  s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'activerecord'
-  s.add_development_dependency 'sqlite3-ruby'
-  s.add_development_dependency 'mini_magick'
-  s.add_development_dependency 'rspec'
 end

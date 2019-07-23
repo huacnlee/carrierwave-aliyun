@@ -7,7 +7,12 @@ module CarrierWave
         @aliyun_access_id    = uploader.aliyun_access_id
         @aliyun_access_key   = uploader.aliyun_access_key
         @aliyun_bucket       = uploader.aliyun_bucket
-        @aliyun_area         = uploader.aliyun_area || 'cn-hangzhou'
+
+        if uploader.aliyun_area.present?
+          ActiveSupport::Deprecation.warn("config.aliyun_area will deprecation in carrierwave-aliyun 1.0.0, please use `aliyun_region` instead.")
+        end
+
+        @aliyun_area         = uploader.aliyun_region || uploader.aliyun_area || 'cn-hangzhou'
         @aliyun_private_read = uploader.aliyun_private_read
         @aliyun_internal     = uploader.aliyun_internal
 
