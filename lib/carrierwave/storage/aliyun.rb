@@ -4,6 +4,8 @@ require "aliyun/oss"
 require "carrierwave"
 require "uri"
 
+Aliyun::Common::Logging.set_log_file("/dev/null")
+
 module CarrierWave
   module Storage
     class Aliyun < Abstract

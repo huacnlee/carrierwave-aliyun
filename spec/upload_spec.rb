@@ -122,6 +122,7 @@ describe "Upload" do
         attach = open(@attachment.file.url)
         expect(attach.size).to eq @file.size
         expect(attach.content_type).to eq "application/zip"
+        puts attach.meta.inspect
         expect(attach.meta["content-disposition"]).to eq "attachment;filename=foo.zip"
       end
 
