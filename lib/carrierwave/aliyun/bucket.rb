@@ -12,22 +12,22 @@ module CarrierWave
 
       def initialize(uploader)
         if uploader.aliyun_area.present?
-          ActiveSupport::Deprecation.warn("config.aliyun_area will deprecation in carrierwave-aliyun 1.0.0, please use `aliyun_region` instead.")
+          ActiveSupport::Deprecation.warn("config.aliyun_area will deprecation in carrierwave-aliyun 1.1.0, please use `aliyun_region` instead.")
           uploader.aliyun_region ||= uploader.aliyun_area
         end
 
         if uploader.aliyun_private_read != nil
-          ActiveSupport::Deprecation.warn(%(config.aliyun_private_read will deprecation in carrierwave-aliyun 1.0.0, please use `aliyun_mode = :private` instead.))
+          ActiveSupport::Deprecation.warn(%(config.aliyun_private_read will deprecation in carrierwave-aliyun 1.1.0, please use `aliyun_mode = :private` instead.))
           uploader.aliyun_mode ||= uploader.aliyun_private_read ? :private : :public
         end
 
         if uploader.aliyun_access_id.present?
-          ActiveSupport::Deprecation.warn(%(config.aliyun_access_id will deprecation in carrierwave-aliyun 1.0.0, please use `aliyun_access_key_id` instead.))
+          ActiveSupport::Deprecation.warn(%(config.aliyun_access_id will deprecation in carrierwave-aliyun 1.1.0, please use `aliyun_access_key_id` instead.))
           uploader.aliyun_access_key_id ||= uploader.aliyun_access_id
         end
 
         if uploader.aliyun_access_key.present?
-          ActiveSupport::Deprecation.warn(%(config.aliyun_access_key will deprecation in carrierwave-aliyun 1.0.0, please use `aliyun_access_key_secret` instead.))
+          ActiveSupport::Deprecation.warn(%(config.aliyun_access_key will deprecation in carrierwave-aliyun 1.1.0, please use `aliyun_access_key_secret` instead.))
           uploader.aliyun_access_key_secret ||= uploader.aliyun_access_key
         end
 
