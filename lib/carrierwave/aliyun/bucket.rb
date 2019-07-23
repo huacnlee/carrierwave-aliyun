@@ -87,7 +87,7 @@ module CarrierWave
           chunk_buff << chunk
         end
 
-        return [obj, chunk_buff.join("")]
+        [obj, chunk_buff.join("")]
       rescue => e
         raise "Get content faild: #{e}"
       end

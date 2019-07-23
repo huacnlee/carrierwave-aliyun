@@ -6,5 +6,5 @@ gem "rake"
 gem "sqlite3", "~> 1.3.6"
 gem "activerecord"
 gem "mini_magick"
-gem "rspec"
+gem "minitest"
 gemspec
