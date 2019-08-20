@@ -47,8 +47,12 @@ module CarrierWave
         headers[:content_type] = new_content_type
       end
 
-      def store(file, headers = {})
-        bucket.put(@path, file, headers)
+      def store(new_file, headers = {})
+        if new_file.is_a?(self.class)
+          new_file.move_to(path)
+        else
+          bucket.put(@path, new_file, headers)
+        end
       end
 
       def headers

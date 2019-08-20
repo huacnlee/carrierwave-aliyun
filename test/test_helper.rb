@@ -57,7 +57,14 @@ class AttachUploader < CarrierWave::Uploader::Base
   include CarrierWave::MiniMagick
 
   def store_dir
-    "attachs"
+    "attaches"
+  end
+
+  def filename
+    if super.present?
+      @name ||= SecureRandom.uuid
+      "#{Time.now.year}/#{@name}.#{file.extension.downcase}"
+    end
   end
 
   def content_disposition

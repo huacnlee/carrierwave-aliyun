@@ -19,7 +19,7 @@ module CarrierWave
       end
 
       def cache!(file)
-        f = AliyunFile.new(uploader, self, uploader.cache_path)
+        f = AliyunFile.new(uploader, self, uploader.store_path)
         headers = {
           content_type: file.content_type,
           content_disposition: uploader.try(:content_disposition)
@@ -30,11 +30,15 @@ module CarrierWave
       end
 
       def retrieve_from_cache!(identifier)
-        AliyunFile.new(uploader, self, uploader.cache_path(identifier))
+        AliyunFile.new(uploader, self, uploader.store_path(identifier))
       end
 
       def delete_dir!(path)
         # do nothing, because there's no such things as 'empty directory'
+      end
+
+      def clean_cache!(_seconds)
+        raise 'use Object Lifecycle Management to clean the cache'
       end
     end
   end

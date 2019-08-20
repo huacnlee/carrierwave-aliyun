@@ -10,7 +10,10 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     @photo1 = Photo.new(image: @file1)
 
     assert_equal true, @photo.save
-    assert_equal true, @photo[:image].present?
+    assert_equal "foo.jpg", @photo[:image]
+
+    # @photo.reload
+    assert_match "/photos/foo.jpg", @photo.image.url
     # FIXME: image? 需要实现
     # assert_equal true, @photo.image?
 
@@ -19,7 +22,7 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     assert_equal "image/jpeg", img.content_type
 
     # get small version uploaded file
-    assert @photo.image.small.url
+    assert_match "/photos/small_foo.jpg", @photo.image.small.url
     small_file = open(@photo.image.small.url)
     assert_equal true, small_file.size > 0
 
@@ -50,6 +53,7 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     assert_equal true, attachment.save
 
     # download and check response
+    assert_match /\/attaches\//, attachment.file.url
     attach = open(attachment.file.url)
     assert_equal f.size, attach.size
     assert_equal "application/zip", attach.content_type
