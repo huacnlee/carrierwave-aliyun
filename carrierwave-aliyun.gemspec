@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.license       = "MIT"
 
-  s.add_dependency "carrierwave", [">= 0.5.7"]
+  s.add_dependency "carrierwave", [">= 1"]
   s.add_dependency "aliyun-sdk", [">= 0.6.0"]
 end
