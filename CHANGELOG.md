@@ -1,3 +1,7 @@
+## 1.1.0
+
+- 支持 CarrierWave 2.0;
+
 ## 1.0.0
 
 - 采用 Aliyun 官方的 SDK 来访问 OSS；
