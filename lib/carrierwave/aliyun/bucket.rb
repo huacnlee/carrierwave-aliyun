@@ -76,6 +76,9 @@ module CarrierWave
       end
 
       def copy_object(source, dest)
+        source = source.sub(PATH_PREFIX, "")
+        dest = dest.sub(PATH_PREFIX, "")
+
         oss_upload_client.copy_object(source, dest)
       end
 

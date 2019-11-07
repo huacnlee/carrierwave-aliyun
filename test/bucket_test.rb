@@ -73,4 +73,15 @@ class CarrierWave::Aliyun::BucketTest < ActiveSupport::TestCase
     assert_equal "foo/head-test.jpg", file.key
     assert_equal f.size, file.size
   end
+
+  test "copy_object" do
+    f = load_file("foo.jpg")
+    url = @bucket.put("foo/source-test.jpg", f)
+    @bucket.copy_object("foo/source-test.jpg", "foo/source-test-copy.jpg")
+
+    file = @bucket.head("foo/source-test-copy.jpg")
+    assert_kind_of Aliyun::OSS::Object, file
+    assert_equal "foo/source-test-copy.jpg", file.key
+    assert_equal f.size, file.size
+  end
 end

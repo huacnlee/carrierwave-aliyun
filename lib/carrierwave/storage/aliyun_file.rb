@@ -3,7 +3,7 @@
 module CarrierWave
   module Storage
     class AliyunFile < CarrierWave::SanitizedFile
-      attr_reader :path
+      attr_reader :uploader, :path
 
       def initialize(uploader, base, path)
         @uploader, @path, @base = uploader, URI.encode(path), base
@@ -61,18 +61,23 @@ module CarrierWave
       end
 
       def file
-        @file ||= bucket.get(path)
+        @file ||= bucket.head(path)
+      end
+
+      def exists?
+        !!file
       end
 
       def copy_to(new_path)
-        bucket.copy_object(self.path, new_path)
-        self.class.new(@uploader, @base, new_path)
+        # puts "--- copy_to #{self.path}, #{new_path}"
+        bucket.copy_object(file.key, new_path)
+        self.class.new(uploader, @base, new_path)
       end
 
       private
 
         def bucket
-          @bucket ||= CarrierWave::Aliyun::Bucket.new(@uploader)
+          @bucket ||= CarrierWave::Aliyun::Bucket.new(uploader)
         end
     end
   end
