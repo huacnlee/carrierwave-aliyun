@@ -3,13 +3,23 @@
 require "test_helper"
 
 class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
+  test "store!" do
+    f = load_file("foo.jpg")
+    uploader = AttachUploader.new
+    uploader.store!(f)
+
+    assert_match /\/attaches\//, uploader.url
+    attach = open(uploader.url)
+    assert_equal f.size, attach.size
+  end
+
   test "upload image" do
     @file = load_file("foo.jpg")
     @file1 = load_file("foo.gif")
     @photo = Photo.new(image: @file)
     @photo1 = Photo.new(image: @file1)
 
-    assert_equal true, @photo.save
+    assert_equal true, @photo.save!
     assert_equal "foo.jpg", @photo[:image]
 
     # @photo.reload
@@ -26,7 +36,7 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     small_file = open(@photo.image.small.url)
     assert_equal true, small_file.size > 0
 
-    assert_equal true, @photo1.save
+    assert_equal true, @photo1.save!
     img1 = open(@photo1.image.url)
     assert_equal @file1.size, img1.size
     assert_equal "image/gif", img1.content_type
@@ -50,7 +60,7 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     attachment = Attachment.new(file: f)
 
     # should save
-    assert_equal true, attachment.save
+    assert_equal true, attachment.save!
 
     # download and check response
     assert_match /\/attaches\//, attachment.file.url
