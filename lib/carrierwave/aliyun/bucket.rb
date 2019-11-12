@@ -141,7 +141,8 @@ module CarrierWave
       end
 
       def head(path)
-        oss_client.get_object(path)
+        path = path.sub(PATH_PREFIX, "")
+        oss_upload_client.get_object(path)
       end
 
       private

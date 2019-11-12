@@ -17,7 +17,7 @@ module Rails
 end
 
 ActiveSupport.on_load :active_record do
-  require 'carrierwave/orm/activerecord'
+  require "carrierwave/orm/activerecord"
 end
 
 # Filter out Minitest backtrace while allowing backtrace from other libraries
@@ -42,6 +42,7 @@ CarrierWave.configure do |config|
   config.aliyun_bucket            = ALIYUN_BUCKET
   config.aliyun_region            = ALIYUN_REGION
   config.aliyun_internal          = false
+  config.aliyun_mode = :public
 end
 
 class PhotoUploader < CarrierWave::Uploader::Base

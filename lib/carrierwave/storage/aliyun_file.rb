@@ -2,8 +2,11 @@
 
 module CarrierWave
   module Storage
-    class AliyunFile < CarrierWave::SanitizedFile
+    class AliyunFile
       attr_reader :uploader, :path
+
+      alias_method :filename, :path
+      alias_method :identifier, :filename
 
       def initialize(uploader, base, path)
         @uploader, @path, @base = uploader, URI.encode(path), base
@@ -57,21 +60,33 @@ module CarrierWave
       end
 
       def headers
-        @headers ||= {}
-      end
-
-      def file
-        @file ||= bucket.head(path)
+        @headers ||= begin
+          obj = bucket.head(path)
+          obj.headers
+        end
       end
 
       def exists?
-        !!file
+        !!headers
       end
 
       def copy_to(new_path)
-        # puts "--- copy_to #{self.path}, #{new_path}"
-        bucket.copy_object(file.key, new_path)
+        bucket.copy_object(path, new_path)
         self.class.new(uploader, @base, new_path)
+      end
+
+      def extension
+        path_elements = path.split(".")
+        path_elements.last if path_elements.size > 1
+      end
+
+      def original_filename
+        return @original_filename if @original_filename
+        if @file && @file.respond_to?(:original_filename)
+          @file.original_filename
+        elsif path
+          ::File.basename(path)
+        end
       end
 
       private

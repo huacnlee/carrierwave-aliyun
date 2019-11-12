@@ -8,4 +8,3 @@ gem "activerecord"
 gem "mini_magick"
 gem "minitest"
 gemspec
-
