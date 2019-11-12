@@ -1,3 +1,7 @@
+## 1.1.1
+
+- 对于 CarrierWave 的 cache 机制正确支持；
+
 ## 1.1.0
 
 - 支持 CarrierWave 2.0;

@@ -75,6 +75,13 @@ module CarrierWave
         end
       end
 
+      def copy_object(source, dest)
+        source = source.sub(PATH_PREFIX, "")
+        dest = dest.sub(PATH_PREFIX, "")
+
+        oss_upload_client.copy_object(source, dest)
+      end
+
       # 读取文件
       # params:
       # - path - remote 存储路径
@@ -134,7 +141,8 @@ module CarrierWave
       end
 
       def head(path)
-        oss_client.get_object_meta(path)
+        path = path.sub(PATH_PREFIX, "")
+        oss_upload_client.get_object(path)
       end
 
       private

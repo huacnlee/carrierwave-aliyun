@@ -4,7 +4,6 @@ require "minitest/autorun"
 require "sqlite3"
 require "active_record"
 require "carrierwave-aliyun"
-require "carrierwave/orm/activerecord"
 require "carrierwave/processing/mini_magick"
 require "open-uri"
 require "net/http"
@@ -15,6 +14,10 @@ module Rails
       [File.expand_path(__FILE__).split("/")[0..-3].join("/"), "test"].join("/")
     end
   end
+end
+
+ActiveSupport.on_load :active_record do
+  require "carrierwave/orm/activerecord"
 end
 
 # Filter out Minitest backtrace while allowing backtrace from other libraries
@@ -39,6 +42,7 @@ CarrierWave.configure do |config|
   config.aliyun_bucket            = ALIYUN_BUCKET
   config.aliyun_region            = ALIYUN_REGION
   config.aliyun_internal          = false
+  config.aliyun_mode = :public
 end
 
 class PhotoUploader < CarrierWave::Uploader::Base

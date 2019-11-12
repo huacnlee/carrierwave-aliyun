@@ -9,9 +9,10 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
   end
 
   test "respond_to identifier, filename" do
-    f = CarrierWave::Storage::AliyunFile.new(@uploader, "", "")
-    assert f.respond_to?(:identifier)
-    assert f.respond_to?(:filename)
+    f = CarrierWave::Storage::AliyunFile.new(@uploader, "", "aaa/bbb.jpg")
+    assert_equal "aaa/bbb.jpg", f.identifier
+    assert_equal "aaa/bbb.jpg", f.filename
+    assert_equal "jpg", f.extension
   end
 
   test "read work" do
@@ -29,5 +30,12 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
       assert f.headers.keys.include?(key)
     end
     assert_equal "image/jpg", f.content_type
+
+    # copy_to
+    new_file = f.copy_to("/a/a-copy.jpg")
+    assert_equal true, new_file.exists?
+    assert_equal "image/jpg", new_file.headers[:content_type]
+    assert_equal local_file.size.to_s, new_file.headers[:content_length]
+    assert_equal local_file.size, new_file.read.size
   end
 end

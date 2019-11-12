@@ -64,4 +64,24 @@ class CarrierWave::Aliyun::BucketTest < ActiveSupport::TestCase
     url = @bucket.private_get_url("bar/foo.jpg", thumb: "@100w_200h_90q")
     assert_equal true, url.include?("https://#{@uploader.aliyun_bucket}.img-cn-beijing.aliyuncs.com/bar/foo.jpg%40100w_200h_90q")
   end
+
+  test "head" do
+    f = load_file("foo.jpg")
+    url = @bucket.put("foo/head-test.jpg", f)
+    file = @bucket.head("foo/head-test.jpg")
+    assert_kind_of Aliyun::OSS::Object, file
+    assert_equal "foo/head-test.jpg", file.key
+    assert_equal f.size, file.size
+  end
+
+  test "copy_object" do
+    f = load_file("foo.jpg")
+    url = @bucket.put("foo/source-test.jpg", f)
+    @bucket.copy_object("foo/source-test.jpg", "foo/source-test-copy.jpg")
+
+    file = @bucket.head("foo/source-test-copy.jpg")
+    assert_kind_of Aliyun::OSS::Object, file
+    assert_equal "foo/source-test-copy.jpg", file.key
+    assert_equal f.size, file.size
+  end
 end
