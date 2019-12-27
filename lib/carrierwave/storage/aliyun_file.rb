@@ -9,7 +9,11 @@ module CarrierWave
       alias_method :identifier, :filename
 
       def initialize(uploader, base, path)
-        @uploader, @path, @base = uploader, URI.encode(path), base
+        @uploader, @path, @base = uploader, escape(path), base
+      end
+
+      def escape(path)
+        CGI.escape(path).gsub("%2F", "/")
       end
 
       def read
@@ -34,9 +38,9 @@ module CarrierWave
       #
       def url(opts = {})
         if bucket.mode == :private
-          bucket.private_get_url(path, opts)
+          bucket.private_get_url(path, **opts)
         else
-          bucket.path_to_url(path, opts)
+          bucket.path_to_url(path, **opts)
         end
       end
 
@@ -53,7 +57,7 @@ module CarrierWave
           new_file.copy_to(path)
         else
           fog_file = new_file.to_file
-          bucket.put(path, fog_file, headers)
+          bucket.put(path, fog_file, **headers)
           fog_file.close if fog_file && !fog_file.closed?
         end
         true
