@@ -132,9 +132,11 @@ module CarrierWave
         path = path.sub(PATH_PREFIX, "")
 
         url = if thumb
-                img_client.object_url([path, thumb].join(""), expiry: 15.minutes)
+                thumb = thumb.gsub('?', '')
+                parameters = Hash[*thumb.split('=')]
+                img_client.object_url(path, true, 15.minutes, parameters)
               else
-                oss_client.object_url(path, expiry: 15.minutes)
+                oss_client.object_url(path, true, 15.minutes)
               end
 
         url.sub("http://", "https://")
