@@ -1,5 +1,10 @@
 ## 1.1.2
 
+- 修正 aliyun-sdk 0.7.0 以上 Thumb URL 生成的支持；
+- Requirement aliyun-sdk >= 0.7.0;
+
+## 1.1.2
+
 - 修正废弃调用方式，避免在 Ruby 2.7 里面出现 warning.
 
 ## 1.1.1

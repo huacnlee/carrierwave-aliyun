@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.license       = "MIT"
 
   s.add_dependency "carrierwave", [">= 1"]
-  s.add_dependency "aliyun-sdk", [">= 0.6.0"]
+  s.add_dependency "aliyun-sdk", [">= 0.7.0"]
 end
