@@ -84,7 +84,6 @@ class Attachment < ActiveRecord::Base
   mount_uploader :file, AttachUploader
 end
 
-
 class ActiveSupport::TestCase
   setup do
     ActiveRecord::Schema.define(version: 1) do
@@ -112,5 +111,9 @@ class ActiveSupport::TestCase
 
   def download_file(url)
     Net::HTTP.get_response(URI.parse(url))
+  end
+
+  def assert_prefix_with(prefix, str)
+    assert str&.start_with?(prefix), "#{str} not start with: #{prefix}"
   end
 end

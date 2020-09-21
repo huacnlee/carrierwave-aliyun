@@ -3,12 +3,12 @@
 module CarrierWave
   module Aliyun
     class Bucket
-      PATH_PREFIX = %r{^/}
+      PATH_PREFIX = %r{^/}.freeze
       CHUNK_SIZE = 1024 * 1024
 
       attr_reader :access_key_id, :access_key_secret, :bucket, :region, :mode, :host
 
-      attr_reader :endpoint, :img_endpoint, :upload_endpoint
+      attr_reader :endpoint, :upload_endpoint, :get_endpoint
 
       def initialize(uploader)
         if uploader.aliyun_area.present?
@@ -16,7 +16,7 @@ module CarrierWave
           uploader.aliyun_region ||= uploader.aliyun_area
         end
 
-        if uploader.aliyun_private_read != nil
+        unless uploader.aliyun_private_read.nil?
           ActiveSupport::Deprecation.warn(%(config.aliyun_private_read will deprecation in carrierwave-aliyun 1.1.0, please use `aliyun_mode = :private` instead.))
           uploader.aliyun_mode ||= uploader.aliyun_private_read ? :private : :public
         end
@@ -38,15 +38,15 @@ module CarrierWave
         @mode              = (uploader.aliyun_mode || :public).to_sym
 
         # Host for get request
-        @host = uploader.aliyun_host || "https://#{self.bucket}.oss-#{self.region}.aliyuncs.com"
+        @endpoint = "https://#{bucket}.oss-#{region}.aliyuncs.com"
+        @host = uploader.aliyun_host || @endpoint
 
         unless @host.include?("//")
-          raise "config.aliyun_host requirement include // http:// or https://, but you give: #{self.host}"
+          raise "config.aliyun_host requirement include // http:// or https://, but you give: #{host}"
         end
 
-        @endpoint = "https://oss-#{self.region}.aliyuncs.com"
-        @upload_endpoint = uploader.aliyun_internal == true ? "https://oss-#{self.region}-internal.aliyuncs.com" : @endpoint
-        @img_endpoint = "https://img-#{self.region}.aliyuncs.com"
+        @get_endpoint = "https://oss-#{region}.aliyuncs.com"
+        @upload_endpoint = uploader.aliyun_internal == true ? "https://oss-#{region}-internal.aliyuncs.com" : "https://oss-#{region}.aliyuncs.com"
       end
 
       # 上传文件
@@ -70,7 +70,7 @@ module CarrierWave
             stream << file.read(CHUNK_SIZE) until file.eof?
           end
           path_to_url(path)
-        rescue => e
+        rescue StandardError => e
           raise "Put file failed: #{e}"
         end
       end
@@ -95,7 +95,7 @@ module CarrierWave
         end
 
         [obj, chunk_buff.join("")]
-      rescue => e
+      rescue StandardError => e
         raise "Get content faild: #{e}"
       end
 
@@ -110,36 +110,38 @@ module CarrierWave
         path = path.sub(PATH_PREFIX, "")
         oss_upload_client.delete_object(path)
         path_to_url(path)
-      rescue => e
+      rescue StandardError => e
         raise "Delete failed: #{e}"
       end
 
       ##
       # 根据配置返回完整的上传文件的访问地址
       def path_to_url(path, thumb: nil)
-        path = path.sub(PATH_PREFIX, "")
-
-        if thumb
-          [self.host, [path, thumb].join("")].join("/")
-        else
-          [self.host, path].join("/")
-        end
+        get_url(path, thumb: thumb)
       end
 
       # 私有空间访问地址，会带上实时算出的 token 信息
       # 有效期 15 minutes
       def private_get_url(path, thumb: nil)
+        get_url(path, private: true, thumb: thumb)
+      end
+
+      def get_url(path, private: false, thumb: nil)
         path = path.sub(PATH_PREFIX, "")
 
-        url = if thumb
-                thumb = thumb.gsub('?', '')
-                parameters = Hash[*thumb.split('=')]
-                img_client.object_url(path, true, 15.minutes, parameters)
+        url = if thumb&.start_with?("?")
+                # foo.jpg?x-oss-process=image/resize,h_100
+                parameters = { "x-oss-process" => thumb.split("=").last }
+                oss_client.object_url(path, private, 15.minutes, parameters)
               else
-                oss_client.object_url(path, true, 15.minutes)
+                oss_client.object_url(path, private, 15.minutes)
               end
 
-        url.sub("http://", "https://")
+        unless private
+          url = [url, thumb].join("") unless thumb&.start_with?("?")
+        end
+
+        url.sub(endpoint, host)
       end
 
       def head(path)
@@ -149,26 +151,19 @@ module CarrierWave
 
       private
 
-        def oss_client
-          return @oss_client if defined?(@oss_client)
-          client = ::Aliyun::OSS::Client.new(endpoint: self.endpoint,
-            access_key_id: self.access_key_id, access_key_secret: self.access_key_secret)
-          @oss_client = client.get_bucket(self.bucket)
-        end
+      def oss_client
+        return @oss_client if defined?(@oss_client)
 
-        def img_client
-          return @img_client if defined?(@img_client)
-          client = ::Aliyun::OSS::Client.new(endpoint: self.img_endpoint,
-            access_key_id: self.access_key_id, access_key_secret: self.access_key_secret)
-          @img_client = client.get_bucket(self.bucket)
-        end
+        client = ::Aliyun::OSS::Client.new(endpoint: get_endpoint, access_key_id: access_key_id, access_key_secret: access_key_secret)
+        @oss_client = client.get_bucket(bucket)
+      end
 
-        def oss_upload_client
-          return @oss_upload_client if defined?(@oss_upload_client)
-          client = ::Aliyun::OSS::Client.new(endpoint: self.upload_endpoint,
-            access_key_id: self.access_key_id, access_key_secret: self.access_key_secret)
-          @oss_upload_client = client.get_bucket(self.bucket)
-        end
+      def oss_upload_client
+        return @oss_upload_client if defined?(@oss_upload_client)
+
+        client = ::Aliyun::OSS::Client.new(endpoint: upload_endpoint, access_key_id: access_key_id, access_key_secret: access_key_secret)
+        @oss_upload_client = client.get_bucket(bucket)
+      end
     end
   end
 end

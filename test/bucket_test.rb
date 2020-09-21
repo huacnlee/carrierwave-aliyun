@@ -30,11 +30,18 @@ class CarrierWave::Aliyun::BucketTest < ActiveSupport::TestCase
     assert_equal "200", res.code
   end
 
-  test "put with custom host" do
+  test "with custom host" do
     @uploader.aliyun_host = "https://foo.bar.com"
     @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
     url = @bucket.put("a/a.jpg", load_file("foo.jpg"))
     assert_equal "https://foo.bar.com/a/a.jpg", url
+
+    # get url
+    assert_equal "https://foo.bar.com/foo/bar.jpg", @bucket.path_to_url("/foo/bar.jpg")
+    assert_equal "https://foo.bar.com/foo/bar.jpg?x-oss-process=image%2Fresize%2Ch_100", @bucket.path_to_url("/foo/bar.jpg", thumb: "?x-oss-process=image/resize,h_100")
+    assert_equal "https://foo.bar.com/foo/bar.jpg!sm", @bucket.path_to_url("/foo/bar.jpg", thumb: "!sm")
+    assert_prefix_with "https://foo.bar.com/foo/bar.jpg", @bucket.private_get_url("/foo/bar.jpg")
+    assert_prefix_with "https://foo.bar.com/foo/bar.jpg", @bucket.private_get_url("/foo/bar.jpg", thumb: "?x-oss-process=image/resize,h_100")
 
     @uploader.aliyun_host = "http://foo.bar.com"
     @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
@@ -50,19 +57,20 @@ class CarrierWave::Aliyun::BucketTest < ActiveSupport::TestCase
 
   test "private mode" do
     @uploader.aliyun_mode = :private
+    @uploader.aliyun_host = nil
     @bucket = CarrierWave::Aliyun::Bucket.new(@uploader)
 
     # should get url include token
     url = @bucket.private_get_url("bar/foo.jpg")
-    # http://oss-cn-beijing.aliyuncs.com.//carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com/bar/foo.jpg?OSSAccessKeyId=1OpWEtPTjIDv5u8q&Expires=1455172009&Signature=4ibgQpfHOjVpqxG6162S8Ar3c6c=
-    %w(Signature Expires OSSAccessKeyId).each do |key|
+    # http://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com/bar/foo.jpg?OSSAccessKeyId=1OpWEtPTjIDv5u8q&Expires=1455172009&Signature=4ibgQpfHOjVpqxG6162S8Ar3c6c=
+    %w[Signature Expires OSSAccessKeyId].each do |key|
       assert_equal true, url.include?(key)
     end
-    assert_equal true, url.include?("https://#{@uploader.aliyun_bucket}.oss-#{@uploader.aliyun_region}.aliyuncs.com/bar/foo.jpg")
+    assert_prefix_with "https://#{@uploader.aliyun_bucket}.oss-#{@uploader.aliyun_region}.aliyuncs.com/bar/foo.jpg", url
 
     # should get url with :thumb
     url = @bucket.private_get_url("bar/foo.jpg", thumb: "?x-oss-process=image/resize,w_192,h_192,m_fill")
-    assert_equal true, url.include?("https://#{@uploader.aliyun_bucket}.img-cn-beijing.aliyuncs.com/bar/foo.jpg?x-oss-process=image%2Fresize%2Cw_192%2Ch_192%2Cm_fill&Expires=")
+    assert_prefix_with "https://#{@uploader.aliyun_bucket}.oss-cn-beijing.aliyuncs.com/bar/foo.jpg?x-oss-process=image%2Fresize%2Cw_192%2Ch_192%2Cm_fill&Expires=", url
   end
 
   test "head" do

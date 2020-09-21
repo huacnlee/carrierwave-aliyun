@@ -43,12 +43,14 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
 
     # get Aliyun OSS thumb url with :thumb option
     url = @photo.image.url(thumb: "?x-oss-process=image/resize,w_100")
-    assert_equal true, url.include?("https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com")
-    assert_equal true, url.include?("?x-oss-process=image/resize,w_100")
+    uri = URI.parse(url)
+    assert_prefix_with "https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com", url
+    assert_equal "x-oss-process=image%2Fresize%2Cw_100", uri.query
 
     url1 = @photo.image.url(thumb: "?x-oss-process=image/resize,w_60")
-    assert_equal true, url1.include?("https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com")
-    assert_equal true, url1.include?("?x-oss-process=image/resize,w_60")
+    uri = URI.parse(url1)
+    assert_prefix_with "https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com", url1
+    assert_equal "x-oss-process=image%2Fresize%2Cw_60", uri.query
 
     img1 = URI.open(url)
     assert_equal true, img1.size > 0
@@ -63,7 +65,7 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     attachment.save!
 
     # download and check response
-    assert_match /\/attaches\//, attachment.file.url
+    assert_match(%r{/attaches/}, attachment.file.url)
 
     attach = URI.open(attachment.file.url)
     assert_equal f.size, attach.size
