@@ -1,3 +1,8 @@
+## 1.2.0
+
+- 整理修复 OSS 文件访问 URL 的生成方式，去掉 img host，保持和最新 OSS API 一样的逻辑。
+- 生成 URL 的时候，不再强制替换为 https，保持 `aliyun_host` 的配置；
+
 ## 1.1.2
 
 - 修正 aliyun-sdk 0.7.0 以上 Thumb URL 生成的支持；
