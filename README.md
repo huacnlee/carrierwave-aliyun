@@ -2,7 +2,7 @@
 
 This gem adds support for [Aliyun OSS](http://oss.aliyun.com) to [CarrierWave](https://github.com/jnicklas/carrierwave/)
 
-[![Gem Version](https://badge.fury.io/rb/carrierwave-aliyun.svg)](https://rubygems.org/gems/carrierwave-aliyun) [![Build Status](https://travis-ci.org/huacnlee/carrierwave-aliyun.svg?branch=master)](https://travis-ci.org/huacnlee/carrierwave-aliyun) [![Code Climate](https://codeclimate.com/github/huacnlee/carrierwave-aliyun/badges/gpa.svg)](https://codeclimate.com/github/huacnlee/carrierwave-aliyun)
+[![Gem Version](https://badge.fury.io/rb/carrierwave-aliyun.svg)](https://rubygems.org/gems/carrierwave-aliyun) [![build](https://github.com/huacnlee/carrierwave-aliyun/workflows/build/badge.svg)](https://github.com/huacnlee/carrierwave-aliyun/actions?query=workflow%3Abuild)
 
 > NOTE: 此 Gem 是一个 CarrierWave 的组件，你需要配合 CarrierWave 一起使用，如果你需要直接用 Aliyun OSS，可以尝试用 [aliyun-sdk](https://github.com/aliyun/aliyun-oss-ruby-sdk) 这个 Gem。
 
