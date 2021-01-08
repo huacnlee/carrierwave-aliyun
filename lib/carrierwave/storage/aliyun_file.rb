@@ -3,6 +3,7 @@
 module CarrierWave
   module Storage
     class AliyunFile
+      attr_writer :file
       attr_reader :uploader, :path
 
       alias_method :filename, :path
@@ -10,6 +11,14 @@ module CarrierWave
 
       def initialize(uploader, base, path)
         @uploader, @path, @base = uploader, escape(path), base
+      end
+
+      def file
+        @file ||= bucket.get(path).try(:first)
+      end
+
+      def size
+        file.headers[:content_length].to_i rescue nil
       end
 
       def escape(path)
