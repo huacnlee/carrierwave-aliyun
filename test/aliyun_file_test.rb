@@ -26,7 +26,7 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
     assert_equal res.body, body
 
     assert_equal "https://carrierwave-aliyun-test.oss-cn-beijing.aliyuncs.com/a/a.jpg", f.url
-    %i(content_type server date content_length etag last_modified content_md5).each do |key|
+    %i[content_type server date content_length etag last_modified content_md5].each do |key|
       assert f.headers.keys.include?(key)
     end
     assert_equal "image/jpg", f.content_type
@@ -36,6 +36,7 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
     assert_equal true, new_file.exists?
     assert_equal "image/jpg", new_file.headers[:content_type]
     assert_equal local_file.size.to_s, new_file.headers[:content_length]
+    assert_equal local_file.size, new_file.size
     assert_equal local_file.size, new_file.read.size
   end
 end
