@@ -16,11 +16,15 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
   end
 
   test "CJK file name" do
-    f = load_file("foo.jpg")
-    image_url = @bucket.put("/hello/中文 文件测试.jpg", f)
+    f = rack_upload_file("中文 文件测试.zip", content_type: "application/zip")
+    image_url = @bucket.put("/hello/中文 文件 100% 测试?a=1&b=2.zip", f, content_type: "application/zip")
     # puts "-------- #{image_url}"
+    fname = File.basename(image_url)
+    assert_equal "中文 文件 100% 测试?a=1&b=2.zip", CGI.unescape(fname)
     res = download_file(image_url)
+    assert_equal "200", res.code
     assert_equal f.size, res.body.size
+    assert_equal "application/zip", res["Content-Type"]
   end
 
   test "read work" do

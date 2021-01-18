@@ -7,11 +7,12 @@ require "carrierwave-aliyun"
 require "carrierwave/processing/mini_magick"
 require "open-uri"
 require "net/http"
+require "rack/test"
 
 module Rails
   class <<self
     def root
-      [File.expand_path(__FILE__).split("/")[0..-3].join("/"), "test"].join("/")
+      Pathname.new([File.expand_path(__FILE__).split("/")[0..-3].join("/"), "test"].join("/"))
     end
   end
 end
@@ -105,8 +106,12 @@ class ActiveSupport::TestCase
     end
   end
 
-  def load_file(fname)
-    File.open([Rails.root, "fixtures", fname].join("/"))
+  def load_file(name)
+    File.open(Rails.root.join("fixtures/#{name}"))
+  end
+
+  def rack_upload_file(name, content_type = "text/plain")
+    Rack::Test::UploadedFile.new(Rails.root.join("fixtures/#{name}"), content_type)
   end
 
   def download_file(url)
