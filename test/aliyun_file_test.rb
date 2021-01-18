@@ -16,7 +16,7 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
   end
 
   test "CJK file name" do
-    f = rack_upload_file("中文 文件测试.zip", content_type: "application/zip")
+    f = rack_upload_file("中文 文件测试.zip", "application/zip")
     image_url = @bucket.put("/hello/中文 文件 100% 测试?a=1&b=2.zip", f, content_type: "application/zip")
     # puts "-------- #{image_url}"
     fname = File.basename(image_url)
