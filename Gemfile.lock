@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    carrierwave-aliyun (1.2.1)
+    carrierwave-aliyun (1.2.2)
       aliyun-sdk (>= 0.7.0)
       carrierwave (>= 1)
 
