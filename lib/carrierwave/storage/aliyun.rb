@@ -37,22 +37,11 @@ module CarrierWave
         # do nothing, because there's no such things as 'empty directory'
       end
 
-      def clean_cache!(_seconds)
-        will_remove_keys = []
-        bucket.list_objects(prefix: uploader.cache_path).each do |file|
-          next unless file.is_a?(Object)
-          time = file.key.scan(/(\d+)-\d+-\d+(?:-\d+)?/).first.map { |t| t.to_i }
-          time = Time.at(*time)
-          will_remove_keys << item.key if time < (Time.now.utc - seconds)
-        end
-        bucket.batch_delete_objects(will_remove_keys)
-      end
-
       private
 
-        def bucket
-          @bucket ||= CarrierWave::Aliyun::Bucket.new(uploader)
-        end
+      def bucket
+        @bucket ||= CarrierWave::Aliyun::Bucket.new(uploader)
+      end
     end
   end
 end

@@ -121,4 +121,10 @@ class ActiveSupport::TestCase
   def assert_prefix_with(prefix, str)
     assert str&.start_with?(prefix), "#{str} not start with: #{prefix}"
   end
+
+  def assert_no_cache_files(uploader)
+    bucket = CarrierWave::Aliyun::Bucket.new(uploader)
+    files = bucket.list_objects(prefix: uploader.cache_path).to_a
+    assert_equal 0, files.length
+  end
 end

@@ -6,11 +6,13 @@ module CarrierWave
       attr_writer :file
       attr_reader :uploader, :path
 
-      alias_method :filename, :path
-      alias_method :identifier, :filename
+      alias filename path
+      alias identifier filename
 
       def initialize(uploader, base, path)
-        @uploader, @path, @base = uploader, escape(path), base
+        @uploader = uploader
+        @path = path
+        @base = base
       end
 
       def file
@@ -18,11 +20,9 @@ module CarrierWave
       end
 
       def size
-        file.headers[:content_length].to_i rescue nil
-      end
-
-      def escape(path)
-        CGI.escape(path).gsub("%2F", "/")
+        file.headers[:content_length].to_i
+      rescue StandardError
+        nil
       end
 
       def read
@@ -34,7 +34,7 @@ module CarrierWave
       def delete
         bucket.delete(path)
         true
-      rescue => e
+      rescue StandardError => e
         # If the file's not there, don't panic
         puts "carrierwave-aliyun delete file failed: #{e}"
         nil
@@ -95,7 +95,8 @@ module CarrierWave
 
       def original_filename
         return @original_filename if @original_filename
-        if @file && @file.respond_to?(:original_filename)
+
+        if @file&.respond_to?(:original_filename)
           @file.original_filename
         elsif path
           ::File.basename(path)
@@ -104,9 +105,9 @@ module CarrierWave
 
       private
 
-        def bucket
-          @bucket ||= CarrierWave::Aliyun::Bucket.new(uploader)
-        end
+      def bucket
+        @bucket ||= CarrierWave::Aliyun::Bucket.new(uploader)
+      end
     end
   end
 end

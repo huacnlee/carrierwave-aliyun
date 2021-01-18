@@ -6,9 +6,8 @@ module CarrierWave
       PATH_PREFIX = %r{^/}.freeze
       CHUNK_SIZE = 1024 * 1024
 
-      attr_reader :access_key_id, :access_key_secret, :bucket, :region, :mode, :host
-
-      attr_reader :endpoint, :upload_endpoint, :get_endpoint
+      attr_reader :access_key_id, :access_key_secret, :bucket, :region, :mode, :host, :endpoint, :upload_endpoint,
+                  :get_endpoint
 
       def initialize(uploader)
         if uploader.aliyun_area.present?
@@ -137,9 +136,7 @@ module CarrierWave
                 oss_client.object_url(path, private, 15.minutes)
               end
 
-        unless private
-          url = [url, thumb].join("") unless thumb&.start_with?("?")
-        end
+        url = [url, thumb].join("") if !private && !thumb&.start_with?("?")
 
         url.sub(endpoint, host)
       end
@@ -149,19 +146,26 @@ module CarrierWave
         oss_upload_client.get_object(path)
       end
 
+      # list_objects for test
+      def list_objects(opts = {})
+        oss_client.list_objects(opts)
+      end
+
       private
 
       def oss_client
         return @oss_client if defined?(@oss_client)
 
-        client = ::Aliyun::OSS::Client.new(endpoint: get_endpoint, access_key_id: access_key_id, access_key_secret: access_key_secret)
+        client = ::Aliyun::OSS::Client.new(endpoint: get_endpoint, access_key_id: access_key_id,
+                                           access_key_secret: access_key_secret)
         @oss_client = client.get_bucket(bucket)
       end
 
       def oss_upload_client
         return @oss_upload_client if defined?(@oss_upload_client)
 
-        client = ::Aliyun::OSS::Client.new(endpoint: upload_endpoint, access_key_id: access_key_id, access_key_secret: access_key_secret)
+        client = ::Aliyun::OSS::Client.new(endpoint: upload_endpoint, access_key_id: access_key_id,
+                                           access_key_secret: access_key_secret)
         @oss_upload_client = client.get_bucket(bucket)
       end
     end

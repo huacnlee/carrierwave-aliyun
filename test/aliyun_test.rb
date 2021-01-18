@@ -41,6 +41,8 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     assert_equal @file1.size, img1.size
     assert_equal "image/gif", img1.content_type
 
+    assert_no_cache_files @photo.image
+
     # get Aliyun OSS thumb url with :thumb option
     url = @photo.image.url(thumb: "?x-oss-process=image/resize,w_100")
     uri = URI.parse(url)
@@ -55,6 +57,21 @@ class CarrierWave::Storage::AliyunTest < ActiveSupport::TestCase
     img1 = URI.open(url)
     assert_equal true, img1.size > 0
     assert_equal "image/jpeg", img1.content_type
+  end
+
+  test "upload CJK file name" do
+    f = rack_upload_file("中文 文件测试.zip", "application/zip")
+    attachment = Attachment.new(file: f)
+    attachment.save!
+
+    assert_no_cache_files attachment.file
+
+    file_url = attachment.file.url
+    # puts "-------- #{file_url}"
+    res = download_file(file_url)
+    assert_equal "200", res.code
+    assert_equal f.size, res.body.size
+    assert_equal "application/zip", res["Content-Type"]
   end
 
   test "upload a non image file" do
