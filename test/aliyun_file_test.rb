@@ -15,6 +15,14 @@ class CarrierWave::Storage::AliyunFileTest < ActiveSupport::TestCase
     assert_equal "jpg", f.extension
   end
 
+  test "CJK file name" do
+    f = load_file("foo.jpg")
+    image_url = @bucket.put("/hello/中文 文件测试.jpg", f)
+    # puts "-------- #{image_url}"
+    res = download_file(image_url)
+    assert_equal f.size, res.body.size
+  end
+
   test "read work" do
     local_file = load_file("foo.jpg")
     image_url = @bucket.put("/a/a.jpg", load_file("foo.jpg"))
