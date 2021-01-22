@@ -80,3 +80,20 @@ class AttachmentUploader < CarrierWave::Uploader::Base
   end
 end
 ```
+
+## 启用全球传输加速
+
+阿里云允许我们通过 `oss-accelerate.aliyuncs.com` 的节点来实现全球的传输加速，如果你的需要在境外的服务器传输到国内，或许需要开启这个功能。
+
+你只需要将 CarrierWave Aliyun 的 `aliyun_region` 配置为 `accelerate` 即可。
+
+```rb
+config.aliyun_region = "accelerate"
+```
+
+### 异常解析
+
+> 错误：OSS Transfer Acceleration is not configured on this bucket.
+> 确保有开启 [传输加速](https://help.aliyun.com/document_detail/131312.html)，进入 Bucket / 传输管理 / 传输加速 / 开启传输加速。
+
+额外注意：Aliyun OSS 开启传输加速后需要 **30 分钟内全网生效**
