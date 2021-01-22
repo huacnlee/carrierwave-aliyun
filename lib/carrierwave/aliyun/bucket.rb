@@ -5,6 +5,7 @@ module CarrierWave
     class Bucket
       PATH_PREFIX = %r{^/}.freeze
       CHUNK_SIZE = 1024 * 1024
+      GLOBAL_REGION_NAME = "accelerate"
 
       attr_reader :access_key_id, :access_key_secret, :bucket, :region, :mode, :host, :endpoint, :upload_endpoint,
                   :get_endpoint
@@ -38,6 +39,10 @@ module CarrierWave
 
         # Host for get request
         @endpoint = "https://#{bucket}.oss-#{region}.aliyuncs.com"
+        # Supports accelerate
+        # https://help.aliyun.com/document_detail/131312.html
+        @endpoint = "https://oss-#{region}.aliyuncs.com" if region.include?(GLOBAL_REGION_NAME)
+
         @host = uploader.aliyun_host || @endpoint
 
         unless @host.include?("//")
@@ -46,6 +51,10 @@ module CarrierWave
 
         @get_endpoint = "https://oss-#{region}.aliyuncs.com"
         @upload_endpoint = uploader.aliyun_internal == true ? "https://oss-#{region}-internal.aliyuncs.com" : "https://oss-#{region}.aliyuncs.com"
+        if region.include?(GLOBAL_REGION_NAME)
+          @upload_endpoint = @endpoint
+          @get_endpoint = @endpoint
+        end
       end
 
       # 上传文件
