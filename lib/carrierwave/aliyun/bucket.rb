@@ -73,14 +73,10 @@ module CarrierWave
         headers["Content-Type"] = content_type
         headers["Content-Disposition"] = content_disposition if content_disposition
 
-        begin
-          oss_upload_client.put_object(path, headers: headers) do |stream|
-            stream << file.read(CHUNK_SIZE) until file.eof?
-          end
-          path_to_url(path)
-        rescue StandardError => e
-          raise "Put file failed: #{e}"
+        oss_upload_client.put_object(path, headers: headers) do |stream|
+          stream << file.read(CHUNK_SIZE) until file.eof?
         end
+        path_to_url(path)
       end
 
       def copy_object(source, dest)
@@ -103,8 +99,6 @@ module CarrierWave
         end
 
         [obj, chunk_buff.join("")]
-      rescue StandardError => e
-        raise "Get content faild: #{e}"
       end
 
       # 删除 Remote 的文件
@@ -118,8 +112,6 @@ module CarrierWave
         path = path.sub(PATH_PREFIX, "")
         oss_upload_client.delete_object(path)
         path_to_url(path)
-      rescue StandardError => e
-        raise "Delete failed: #{e}"
       end
 
       ##
