@@ -6,8 +6,8 @@ module CarrierWave
       attr_writer :file
       attr_reader :uploader, :path
 
-      alias filename path
-      alias identifier filename
+      alias_method :filename, :path
+      alias_method :identifier, :filename
 
       def initialize(uploader, base, path)
         @uploader = uploader
@@ -21,7 +21,7 @@ module CarrierWave
 
       def size
         file.headers[:content_length].to_i
-      rescue StandardError
+      rescue
         nil
       end
 
@@ -34,7 +34,7 @@ module CarrierWave
       def delete
         bucket.delete(path)
         true
-      rescue StandardError => e
+      rescue => e
         # If the file's not there, don't panic
         puts "carrierwave-aliyun delete file failed: #{e}"
         nil

@@ -48,7 +48,7 @@ end
 
 > NOTE: Private Bucket also support this feature!
 
-关于阿里云 OSS 图片缩略图的详细文档，请仔细阅读: [Aliyun OSS 接入图片服务](https://help.aliyun.com/document_detail/44688.html)
+关于阿里云 OSS 图片缩略图的详细文档，请仔细阅读：[Aliyun OSS 接入图片服务](https://help.aliyun.com/document_detail/44688.html)
 
 The details of the Alicoud OSS image thumb service, please visit [Alicloud OSS - Image Processing / Resize images](https://www.alibabacloud.com/help/doc-detail/44688.htm)
 
